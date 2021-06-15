@@ -1,5 +1,5 @@
 // deno install --allow-net --allow-read --allow-run -n deno_tag -f ./tag.ts
-import {runTask} from '../lib/task.ts';
+import { runTask } from '../lib/task.ts';
 
 const tag = async function (version: string) {
   const arr = [
@@ -28,8 +28,12 @@ function tagNode() {
 }
 
 if (import.meta.main) {
-  if(Deno.args.length > 0) {
-    tag(Deno.args[0]);
+  if (Deno.args.length > 0) {
+    let version = Deno.args[0];
+    if (!version.startsWith('v')) {
+      version = 'v' + version;
+    }
+    tag(version);
   } else {
     tagNode();
   }
