@@ -8,7 +8,7 @@
 
 安装：
 ```
-deno install --allow-net --allow-read --allow-run -n deno_tag -f https://deno.land/x/jw_cli@v0.0.1/cli/tag.ts
+deno install --allow-net --allow-read --allow-run -n deno_tag -f https://deno.land/x/jw_cli@v0.0.2/cli/tag.ts
 ```
 
 使用：
