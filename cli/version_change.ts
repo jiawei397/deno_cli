@@ -1,6 +1,6 @@
 // deno_tag patch 'feat: xxx'
 // 这个文件专门处理deno的变更
-import { runTask } from "../lib/task.ts";
+import { runTasks } from "../lib/task.ts";
 
 // deno_tag patch
 export const versionPath = "scripts.json";
@@ -28,20 +28,8 @@ async function getPkg() {
 }
 
 function formatVersion(pkg: Package) {
-    // console.log(Deno.args);
-    const argLen = Deno.args.length;
-    if (argLen === 0) {
-        console.error("没有传递参数，不应该走到这里");
-        Deno.exit(1);
-    }
-
-    let versionAction: string;
-
-    if (argLen === 1) { // 没有传递参数
-        versionAction = actions[0];
-    } else {
-        versionAction = Deno.args[1];
-    }
+    console.log(Deno.args);
+    const versionAction = Deno.args[0] || actions[0];
     let version = versionAction;
 
     if (actions.includes(versionAction)) { // 意味着要变更版本
@@ -86,7 +74,12 @@ export async function changeVersion() {
     const pkg = await getPkg();
     const version = formatVersion(pkg);
     writeJson(version, pkg);
-    await runTask(`git add ${versionPath}`);
-    await runTask(`git commit -m '${version}'`);
+
+    const arr = [
+        `git add ${versionPath}`,
+        `git commit -m '${version}'`,
+    ];
+    await runTasks(arr);
+
     return version;
 }

@@ -16,4 +16,15 @@ const runTask = async (str: string) => {
   return code;
 };
 
-export { runTask };
+const runTasks = async function (arr: string[]) {
+  for (const str of arr) {
+    console.log(`运行任务：${str}`);
+    const code = await runTask(str);
+    console.log(`任务结束：${str}`);
+    if (code) {
+      Deno.exit(code);
+    }
+  }
+}
+
+export { runTask, runTasks };
