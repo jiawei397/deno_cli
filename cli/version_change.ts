@@ -86,7 +86,7 @@ async function writeReadme(version: string, pkg: Package) {
 
     const doc = await Deno.readTextFile(readmePath);
     const reg = new RegExp(pkg.name + '@v(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})', 'g');
-    const newDoc = doc.replace(reg, pkg.name + '@' + version);
+    const newDoc = doc.replace(reg, pkg.name + '@v' + version);
     await Deno.writeTextFile(readmePath, newDoc);
 }
 
