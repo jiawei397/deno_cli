@@ -32,7 +32,9 @@ deno_tag minor
 deno_tag major
 ```
 
-会更新根目录下的`scripts.json`文件
+会更新根目录下的`scripts.yml`文件和`README.md`，如果后者有使用`scripts.yml`中配置的`name`，将会对应替换。
+
+比如本工程的名称为`jw_cli`，那么本文件中`jw_cli@v0.1.2`都会对应替换为新的版本。
 
 ## 写入本地hosts文件
 
