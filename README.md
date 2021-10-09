@@ -9,7 +9,7 @@
 安装：
 
 ```
-deno install --allow-net --allow-read --allow-run -n deno_tag -f https://deno.land/x/jw_cli@v0.0.2/cli/tag.ts
+deno install --allow-net --allow-read --allow-write --allow-run -n deno_tag -f https://deno.land/x/jw_cli@v0.0.7/cli/tag.ts
 ```
 
 使用： nodejs项目，在项目根目录下，执行
@@ -23,6 +23,16 @@ deno项目，在项目根目录下执行：
 ```
 deno_tag 0.0.1
 ```
+
+或者
+
+```
+deno_tag patch
+deno_tag minor
+deno_tag major
+```
+
+会更新根目录下的`scripts.json`文件
 
 ## 写入本地hosts文件
 

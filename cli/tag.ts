@@ -1,4 +1,4 @@
-// deno install --allow-net --allow-read --allow-write --allow-run -n deno_tag -f ./tag.ts
+// deno install --allow-read --allow-write --allow-run -n deno_tag -f ./tag.ts
 import { runTasks } from "../lib/task.ts";
 import { changeVersion, versionPath } from "./version_change.ts";
 
