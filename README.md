@@ -12,13 +12,15 @@
 deno install --allow-read --allow-write --allow-run -n deno_tag -f https://deno.land/x/jw_cli@v0.1.3/cli/tag.ts
 ```
 
-使用： nodejs项目，在项目根目录下，执行
+使用：
+
+1. nodejs项目，在项目根目录下，执行
 
 ```
 deno_tag
 ```
 
-deno项目，在项目根目录下执行：
+2. deno项目，在项目根目录下执行：
 
 ```
 deno_tag 0.0.1
@@ -43,7 +45,7 @@ deno_tag major
 安装：
 
 ```
-deno install --allow-write --allow-read -n deno_wiki -f https://deno.land/x/jw_cli@0.0.10/cli/hosts.ts
+deno install --allow-write --allow-read -n deno_wiki -f https://deno.land/x/jw_cli@v0.0.10/cli/hosts.ts
 ```
 
 使用：
