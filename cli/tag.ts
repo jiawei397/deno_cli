@@ -1,6 +1,6 @@
 // deno install --allow-net --allow-read --allow-run -n deno_tag -f ./tag.ts
-import { runTask } from '../lib/task.ts';
-import { changeVersion } from './version_change.ts';
+import { runTask } from "../lib/task.ts";
+import { changeVersion, versionPath } from "./version_change.ts";
 
 let msg: string;
 
@@ -15,7 +15,7 @@ function tagNode() {
   return tag(version);
 }
 
-const tag = async function (version: string) {
+async function tag(version: string) {
   const arr = [
     `git tag -a ${version} -m "${msg || version}"`,
     `git push origin ${version}`,
@@ -28,7 +28,8 @@ const tag = async function (version: string) {
       Deno.exit(code);
     }
   }
-};
+}
+
 
 if (import.meta.main) {
   const isFileExist = function (path: string) {
@@ -38,23 +39,23 @@ if (import.meta.main) {
     } catch {
       return false;
     }
-  }
-  const isExistPkg = isFileExist('package.json');
+  };
+  const isExistPkg = isFileExist("package.json");
   if (isExistPkg) {
     tagNode();
   } else {
-    const isExistScripts = isFileExist('scripts.json');
+    const isExistScripts = isFileExist(versionPath);
     if (isExistScripts) {
       const version = await changeVersion();
       msg = Deno.args[2] || version;
-      const newVersion = version.startsWith('v') ? version : ('v' + version);
+      const newVersion = version.startsWith("v") ? version : ("v" + version);
       tag(newVersion);
     } else {
       const version = Deno.args[1];
       if (version) {
         tag(version);
       } else {
-        console.error('需要传递version');
+        console.error("需要传递version");
         Deno.exit(1);
       }
     }

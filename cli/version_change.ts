@@ -1,16 +1,10 @@
 // deno_tag patch 'feat: xxx'
-
+// 这个文件专门处理deno的变更
 import { runTask } from "../lib/task.ts";
 
 // deno_tag patch
-export const versionPath = 'scripts.json';
-const actions = ['patch', 'minor', 'major'];
-
-// console.log(Deno.args);
-const argLen = Deno.args.length;
-if (argLen === 0) {
-    Deno.exit(1);
-}
+export const versionPath = "scripts.json";
+const actions = ["patch", "minor", "major"];
 
 interface Package {
     version: string;
@@ -22,16 +16,25 @@ async function getPkg() {
     const pkgMap: Package = JSON.parse(pkg);
     if (pkgMap.version) {
         if (!/^\d{1}\.\d{1}\.\d{1}$/.test(pkgMap.version)) {
-            console.error(`version [${pkgMap.version}] in [${versionPath}] is invalid`);
+            console.error(
+                `version [${pkgMap.version}] in [${versionPath}] is invalid`,
+            );
             Deno.exit(1);
         }
     } else {
-        pkgMap.version = '0.0.0';
+        pkgMap.version = "0.0.0";
     }
     return pkgMap;
 }
 
 function formatVersion(pkg: Package) {
+    // console.log(Deno.args);
+    const argLen = Deno.args.length;
+    if (argLen === 0) {
+        console.error("没有传递参数，不应该走到这里");
+        Deno.exit(1);
+    }
+
     let versionAction: string;
 
     if (argLen === 1) { // 没有传递参数
@@ -44,20 +47,20 @@ function formatVersion(pkg: Package) {
     if (actions.includes(versionAction)) { // 意味着要变更版本
         const oldversionAction = pkg.version;
 
-        const arr = oldversionAction.split('.');
+        const arr = oldversionAction.split(".");
         let changedIndex = 0;
-        if (versionAction === 'patch') {
+        if (versionAction === "patch") {
             changedIndex = 2;
-        } else if (versionAction === 'minor') {
+        } else if (versionAction === "minor") {
             changedIndex = 1;
-            arr[2] = '0';
+            arr[2] = "0";
         } else {
-            arr[2] = arr[1] = '0';
+            arr[2] = arr[1] = "0";
         }
         if (changedIndex !== -1) {
-            arr[changedIndex] = (Number(arr[changedIndex]) + 1) + '';
+            arr[changedIndex] = (Number(arr[changedIndex]) + 1) + "";
         }
-        version = arr.join('.');
+        version = arr.join(".");
     }
 
     return version;
@@ -66,10 +69,17 @@ function formatVersion(pkg: Package) {
 function writeJson(version: string, pkg: Package) {
     const { version: _, ...others } = pkg;
     console.log(`version will be changed to ${version}`);
-    Deno.writeTextFileSync(versionPath, JSON.stringify({
-        version,
-        ...others
-    }, null, 2));
+    Deno.writeTextFileSync(
+        versionPath,
+        JSON.stringify(
+            {
+                version,
+                ...others,
+            },
+            null,
+            2,
+        ),
+    );
 }
 
 export async function changeVersion() {

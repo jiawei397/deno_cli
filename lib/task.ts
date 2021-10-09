@@ -16,4 +16,4 @@ const runTask = async (str: string) => {
   return code;
 };
 
-export {runTask};
+export { runTask };
