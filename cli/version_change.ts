@@ -97,7 +97,7 @@ export async function changeVersion() {
     await writeReadme(version, pkg);
 
     const arr = [
-        `git add ${scriptsPath}`,
+        `git add ${scriptsPath} ${readmePath}`,
         `git commit -m ${version}`,
     ];
     await runTasks(arr);
