@@ -1,20 +1,8 @@
 // deno install --allow-net --allow-read --allow-run -n deno_tag -f ./tag.ts
 import { runTask } from '../lib/task.ts';
+import { changeVersion } from './version_change.ts';
 
-const tag = async function (version: string) {
-  const arr = [
-    `git tag -a ${version} -m "${version}"`,
-    `git push origin ${version}`,
-  ];
-  for (var str of arr) {
-    console.log(`运行任务：${str}`);
-    const code = await runTask(str);
-    console.log(`任务结束：${str}`);
-    if (code) {
-      Deno.exit(code);
-    }
-  }
-};
+let msg: string;
 
 function tagNode() {
   const pkg: string = Deno.readTextFileSync(Deno.cwd() + "/package.json");
@@ -27,14 +15,48 @@ function tagNode() {
   return tag(version);
 }
 
-if (import.meta.main) {
-  if (Deno.args.length > 0) {
-    let version = Deno.args[0];
-    if (!version.startsWith('v')) {
-      version = 'v' + version;
+const tag = async function (version: string) {
+  const arr = [
+    `git tag -a ${version} -m "${msg || version}"`,
+    `git push origin ${version}`,
+  ];
+  for (const str of arr) {
+    console.log(`运行任务：${str}`);
+    const code = await runTask(str);
+    console.log(`任务结束：${str}`);
+    if (code) {
+      Deno.exit(code);
     }
-    tag(version);
-  } else {
+  }
+};
+
+if (import.meta.main) {
+  const isFileExist = function (path: string) {
+    try {
+      Deno.statSync(path);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  const isExistPkg = isFileExist('package.json');
+  if (isExistPkg) {
     tagNode();
+  } else {
+    const isExistScripts = isFileExist('scripts.json');
+    if (isExistScripts) {
+      const version = await changeVersion();
+      msg = Deno.args[2] || version;
+      const newVersion = version.startsWith('v') ? version : ('v' + version);
+      tag(newVersion);
+    } else {
+      const version = Deno.args[1];
+      if (version) {
+        tag(version);
+      } else {
+        console.error('需要传递version');
+        Deno.exit(1);
+      }
+    }
   }
 }
