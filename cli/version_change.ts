@@ -15,7 +15,7 @@ async function getPkg() {
     const pkg = await Deno.readTextFile(versionPath);
     const pkgMap: Package = JSON.parse(pkg);
     if (pkgMap.version) {
-        if (!/^\d{1}\.\d{1}\.\d{1}$/.test(pkgMap.version)) {
+        if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(pkgMap.version)) {
             console.error(
                 `version [${pkgMap.version}] in [${versionPath}] is invalid`,
             );
