@@ -1,23 +1,26 @@
 // deno_tag patch 'feat: xxx'
 // 这个文件专门处理deno的变更
 import { runTasks } from "../lib/task.ts";
+import { isFileExist } from "../lib/utils.ts";
 
 // deno_tag patch
-export const versionPath = "scripts.json";
+export const scriptsPath = "scripts.json";
+const readmePath = 'README.md';
 const actions = ["patch", "minor", "major"];
 
 interface Package {
     version: string;
+    name: string;
     [K: string]: any;
 }
 
 async function getPkg() {
-    const pkg = await Deno.readTextFile(versionPath);
+    const pkg = await Deno.readTextFile(scriptsPath);
     const pkgMap: Package = JSON.parse(pkg);
     if (pkgMap.version) {
         if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(pkgMap.version)) {
             console.error(
-                `version [${pkgMap.version}] in [${versionPath}] is invalid`,
+                `version [${pkgMap.version}] in [${scriptsPath}] is invalid`,
             );
             Deno.exit(1);
         }
@@ -54,11 +57,11 @@ function formatVersion(pkg: Package) {
     return version;
 }
 
-function writeJson(version: string, pkg: Package) {
+async function writeJson(version: string, pkg: Package) {
     const { version: _, ...others } = pkg;
     console.log(`version will be changed to ${version}`);
-    Deno.writeTextFileSync(
-        versionPath,
+    await Deno.writeTextFile(
+        scriptsPath,
         JSON.stringify(
             {
                 version,
@@ -70,16 +73,36 @@ function writeJson(version: string, pkg: Package) {
     );
 }
 
+
+async function writeReadme(version: string, pkg: Package) {
+    if (!isFileExist(readmePath)) {
+        console.warn(`没有找到【${readmePath}】`)
+        return;
+    }
+
+    if (!pkg.name) {
+        console.warn(`【${scriptsPath}】中没有找到name`)
+    }
+
+    const doc = await Deno.readTextFile(readmePath);
+    const reg = new RegExp(pkg.name + '@v(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})', 'g');
+    const newDoc = doc.replace(reg, pkg.name + '@' + version);
+    await Deno.writeTextFile(readmePath, newDoc);
+}
+
 export async function changeVersion() {
     const pkg = await getPkg();
     const version = formatVersion(pkg);
-    writeJson(version, pkg);
+    await writeJson(version, pkg);
+    await writeReadme(version, pkg);
 
     const arr = [
-        `git add ${versionPath}`,
+        `git add ${scriptsPath}`,
         `git commit -m ${version}`,
     ];
     await runTasks(arr);
 
     return version;
 }
+
+// changeVersion();

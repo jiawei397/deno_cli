@@ -1,6 +1,7 @@
 // deno install --allow-read --allow-write --allow-run -n deno_tag -f ./tag.ts
 import { runTasks } from "../lib/task.ts";
-import { changeVersion, versionPath } from "./version_change.ts";
+import { isFileExist } from "../lib/utils.ts";
+import { changeVersion, scriptsPath } from "./version_change.ts";
 
 let msg: string;
 
@@ -25,19 +26,11 @@ async function tag(version: string) {
 
 
 if (import.meta.main) {
-  const isFileExist = function (path: string) {
-    try {
-      Deno.statSync(path);
-      return true;
-    } catch {
-      return false;
-    }
-  };
   const isExistPkg = isFileExist("package.json");
   if (isExistPkg) {
     tagNode();
   } else {
-    const isExistScripts = isFileExist(versionPath);
+    const isExistScripts = isFileExist(scriptsPath);
     if (isExistScripts) {
       const version = await changeVersion();
       msg = Deno.args[1] || version;
