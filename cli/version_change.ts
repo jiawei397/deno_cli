@@ -2,21 +2,24 @@
 // 这个文件专门处理deno的变更
 import { runTasks } from "../lib/task.ts";
 import { isFileExist } from "../lib/utils.ts";
+import { YamlLoader } from '../deps.ts';
 
 // deno_tag patch
-export const scriptsPath = "scripts.json";
+export const scriptsPath = "scripts.yml";
 const readmePath = 'README.md';
 const actions = ["patch", "minor", "major"];
 
 interface Package {
     version: string;
     name: string;
-    [K: string]: any;
+    [K: string]: unknown;
 }
 
 async function getPkg() {
-    const pkg = await Deno.readTextFile(scriptsPath);
-    const pkgMap: Package = JSON.parse(pkg);
+    const yaml = new YamlLoader();
+
+    const pkgMap = await yaml.parseFile(scriptsPath) as Package;
+
     if (pkgMap.version) {
         if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(pkgMap.version)) {
             console.error(
@@ -57,20 +60,17 @@ function formatVersion(pkg: Package) {
     return version;
 }
 
-async function writeJson(version: string, pkg: Package) {
-    const { version: _, ...others } = pkg;
-    console.log(`version will be changed to ${version}`);
-    await Deno.writeTextFile(
-        scriptsPath,
-        JSON.stringify(
-            {
-                version,
-                ...others,
-            },
-            null,
-            2,
-        ),
-    );
+async function writeScripts(version: string) {
+    console.log(`【${scriptsPath}】version will be changed to ${version}`);
+    const str = await Deno.readTextFile(scriptsPath);
+    const reg = /version:\s*\d+\.\d+\.\d+/g;
+    let newStr: string;
+    if (reg.test(str)) {
+        newStr = str.replace(reg, 'version: ' + version);
+    } else {
+        newStr = 'version: ' + version + '\n' + str;
+    }
+    await Deno.writeTextFile(scriptsPath, newStr);
 }
 
 
@@ -93,7 +93,7 @@ async function writeReadme(version: string, pkg: Package) {
 export async function changeVersion() {
     const pkg = await getPkg();
     const version = formatVersion(pkg);
-    await writeJson(version, pkg);
+    await writeScripts(version);
     await writeReadme(version, pkg);
 
     const arr = [
