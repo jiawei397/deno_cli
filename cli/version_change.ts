@@ -28,7 +28,7 @@ async function getPkg() {
 }
 
 function formatVersion(pkg: Package) {
-    console.log(Deno.args);
+    // console.log(Deno.args);
     const versionAction = Deno.args[0] || actions[0];
     let version = versionAction;
 
