@@ -9,7 +9,7 @@
 安装：
 
 ```
-deno install --allow-read --allow-write --allow-run -n deno_tag -f https://deno.land/x/jw_cli@0.0.10/cli/tag.ts
+deno install --allow-read --allow-write --allow-run -n deno_tag -f https://deno.land/x/jw_cli@v1.0.0/cli/tag.ts
 ```
 
 使用： nodejs项目，在项目根目录下，执行
