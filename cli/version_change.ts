@@ -77,7 +77,7 @@ export async function changeVersion() {
 
     const arr = [
         `git add ${versionPath}`,
-        `git commit -m '${version}'`,
+        `git commit -m ${version}`,
     ];
     await runTasks(arr);
 
