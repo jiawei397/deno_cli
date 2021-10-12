@@ -1,7 +1,7 @@
 // deno install --allow-read --allow-write --allow-run -n deno_tag -f ./tag.ts
-import { runTasks } from "../lib/task.ts";
-import { isFileExist } from "../lib/utils.ts";
-import { changeVersion, scriptsPath } from "./version_change.ts";
+import {runTasks} from "../lib/task.ts";
+import {isFileExist} from "../lib/utils.ts";
+import {changeVersion, scriptsPath} from "./version_change.ts";
 
 let msg: string;
 
@@ -11,7 +11,7 @@ function tagNode() {
     console.error(`当前目录下没有package.json`);
     return;
   }
-  const { version } = JSON.parse(pkg);
+  const {version} = JSON.parse(pkg);
   console.log(`读到版本号：${version}`);
   return tag(version);
 }
@@ -34,12 +34,20 @@ if (import.meta.main) {
     if (isExistScripts) {
       const version = await changeVersion();
       msg = Deno.args[1] || version;
-      const newVersion = version.startsWith("v") ? version : ("v" + version);
-      tag(newVersion);
+      const args = Deno.args;
+      let newVersion = version;
+      if (args.includes('-L') || args.includes('--local')) {  // 代表是local本地，版本不允许有v
+        if (version.startsWith('v')) {
+          newVersion = version.substr(1);
+        }
+      } else { // 其余就添加v
+        newVersion = version.startsWith("v") ? version : ("v" + version);
+      }
+      await tag(newVersion);
     } else {
       const version = Deno.args[0];
       if (version) {
-        tag(version);
+        await tag(version);
       } else {
         console.error("需要传递version");
         Deno.exit(1);
