@@ -9,7 +9,7 @@
 安装：
 
 ```
-deno install --allow-read --allow-write --allow-run -n deno_tag -f https://deno.land/x/jw_cli@v0.1.5/cli/tag.ts
+deno install --allow-read --allow-write --allow-run -n deno_tag -f https://deno.land/x/jw_cli@v0.1.6/cli/tag.ts
 ```
 
 使用：
@@ -36,7 +36,7 @@ deno_tag major
 
 会更新根目录下的`scripts.yml`文件和`README.md`，如果后者有使用`scripts.yml`中配置的`name`，将会对应替换。
 
-比如本工程的名称为`jw_cli`，那么本文件中`jw_cli@v0.1.5`都会对应替换为新的版本。
+比如本工程的名称为`jw_cli`，那么本文件中`jw_cli@v0.1.6`都会对应替换为新的版本。
 
 ## 写入本地hosts文件
 
@@ -45,7 +45,7 @@ deno_tag major
 安装：
 
 ```
-deno install --allow-write --allow-read -n deno_wiki -f https://deno.land/x/jw_cli@v0.1.5/cli/hosts.ts
+deno install --allow-write --allow-read -n deno_wiki -f https://deno.land/x/jw_cli@v0.1.6/cli/hosts.ts
 ```
 
 使用：
