@@ -1,12 +1,12 @@
 // deno_tag patch 'feat: xxx'
 // 这个文件专门处理deno的变更
-import {runTasks} from "../lib/task.ts";
-import {isFileExist} from "../lib/utils.ts";
-import {YamlLoader} from '../deps.ts';
+import { runTasks } from "../lib/task.ts";
+import { isFileExist } from "../lib/utils.ts";
+import { YamlLoader } from "../deps.ts";
 
 // deno_tag patch
 export const scriptsPath = "scripts.yml";
-const readmePath = 'README.md';
+const readmePath = "README.md";
 const actions = ["patch", "minor", "major"];
 
 interface Package {
@@ -24,7 +24,7 @@ async function getPkg() {
   if (pkgMap.version) {
     if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(pkgMap.version)) {
       console.error(
-          `version [${pkgMap.version}] in [${scriptsPath}] is invalid`,
+        `version [${pkgMap.version}] in [${scriptsPath}] is invalid`,
       );
       Deno.exit(1);
     }
@@ -36,7 +36,11 @@ async function getPkg() {
 
 function formatVersion(pkg: Package) {
   // console.log(Deno.args);
-  const versionAction = Deno.args[0] || actions[0];
+  let first = Deno.args[0];
+  if (first === "-L" || first === "--local") {
+    first = "";
+  }
+  const versionAction = first || actions[0];
   let version = versionAction;
 
   if (actions.includes(versionAction)) { // 意味着要变更版本
@@ -57,7 +61,7 @@ function formatVersion(pkg: Package) {
     }
     version = arr.join(".");
   } else {
-    if (version.startsWith('v')) {
+    if (version.startsWith("v")) {
       version = version.substr(1);
     }
   }
@@ -71,27 +75,26 @@ async function writeScripts(version: string) {
   const reg = /version:\s*\d+\.\d+\.\d+/g;
   let newStr: string;
   if (reg.test(str)) {
-    newStr = str.replace(reg, 'version: ' + version);
+    newStr = str.replace(reg, "version: " + version);
   } else {
-    newStr = 'version: ' + version + '\n' + str;
+    newStr = "version: " + version + "\n" + str;
   }
   await Deno.writeTextFile(scriptsPath, newStr);
 }
 
-
 async function writeReadme(version: string, pkg: Package) {
   if (!isFileExist(readmePath)) {
-    console.warn(`没有找到【${readmePath}】`)
+    console.warn(`没有找到【${readmePath}】`);
     return;
   }
 
   if (!pkg.name) {
-    console.warn(`【${scriptsPath}】中没有找到name`)
+    console.warn(`【${scriptsPath}】中没有找到name`);
   }
 
   const doc = await Deno.readTextFile(readmePath);
-  const reg = new RegExp(pkg.name + '@v(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})', 'g');
-  const newDoc = doc.replace(reg, pkg.name + '@v' + version);
+  const reg = new RegExp(pkg.name + "@v(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})", "g");
+  const newDoc = doc.replace(reg, pkg.name + "@v" + version);
   await Deno.writeTextFile(readmePath, newDoc);
 }
 
