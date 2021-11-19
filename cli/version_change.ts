@@ -90,6 +90,7 @@ async function writeReadme(version: string, pkg: Package) {
 
   if (!pkg.name) {
     console.warn(`【${scriptsPath}】中没有找到name`);
+    return;
   }
 
   const doc = await Deno.readTextFile(readmePath);
