@@ -30,3 +30,5 @@ const { url, name } = answers as Params;
 
 const fileName = name ? (name + extname(url)) : basename(url);
 await download(url, fileName);
+
+console.log(`download ${url} ok`);

@@ -3,10 +3,9 @@
 import { runTasks } from "../lib/task.ts";
 import { isFileExist } from "../lib/utils.ts";
 import { YamlLoader } from "../deps.ts";
+import { readmePath, scriptsPath } from "./globals.ts";
 
 // deno_tag patch
-export const scriptsPath = "scripts.yml";
-const readmePath = "README.md";
 const actions = ["patch", "minor", "major"];
 
 interface Package {
