@@ -1,7 +1,7 @@
 // deno compile --unstable --allow-write --allow-read --target x86_64-pc-windows-msvc  ask.ts
 // deno compile --unstable --allow-write --allow-read ask.ts
 import Ask from "https://deno.land/x/ask@1.0.6/mod.ts";
-import { extname } from "https://deno.land/std@0.115.1/path/mod.ts";
+import { basename, extname } from "https://deno.land/std@0.115.1/path/mod.ts";
 import { download } from "../lib/utils.ts";
 // const ask = new Ask(); // global options are also supported! (see below)
 const ask = new Ask({
@@ -29,4 +29,5 @@ const answers: any = await ask.prompt([
 
 const { url, name } = answers as Params;
 
-await download(url, name + extname(url));
+const fileName = name ? (name + extname(url)) : basename(url);
+await download(url, fileName);

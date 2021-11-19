@@ -57,3 +57,17 @@ sudo deno_wiki true
 # 线上测试
 sudo deno_wiki false
 ```
+
+## 下载资源
+
+```
+deno install --allow-write --allow-read -n deno_down -f https://deno.land/x/jw_cli@v0.1.6/cli/download.ts
+```
+
+之后执行：
+
+```
+deno_down
+```
+
+输入下载地址和名称即可。
