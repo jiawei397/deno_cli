@@ -101,3 +101,9 @@ deno_cli
 deno compile --unstable --allow-write --allow-read --allow-net --allow-run --target x86_64-pc-windows-msvc https://deno.land/x/jw_cli@v0.2.1/cli/project.ts
 deno compile --unstable --allow-write --allow-read --allow-net --allow-run https://deno.land/x/jw_cli@v0.2.1/cli/project.ts
 ```
+
+## 校验deps.ts文件是否有未带版本号
+
+```
+deno install  --allow-read --allow-env -n deno_valid -f  https://deno.land/x/jw_cli@v0.2.1/cli/valid_deps.ts
+```
