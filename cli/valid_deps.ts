@@ -35,5 +35,5 @@ if (import.meta.main) {
     console.error(`【${depsPath}】中有未带版本号的引用`);
     Deno.exit(1);
   }
-  console.info("end");
+  console.info("valid ok");
 }
