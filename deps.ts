@@ -8,7 +8,4 @@ export {
 
 export { Ask };
 
-export {
-  compress,
-  decompress,
-} from "https://gitee.com/JiQingYun/deno-zip/raw/main/mod.ts";
+export { compress, decompress } from "https://deno.land/x/zip@v1.2.2/mod.ts";
