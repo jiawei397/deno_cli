@@ -1,2 +1,10 @@
 version: 0.2.1
 name: jw_cli
+scripts:
+  test: 
+    cmd: 'deno test'
+    watch: false
+    allow:
+      - env
+    # env: 
+    #   DEBUG: 'true'
