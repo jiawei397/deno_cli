@@ -1,4 +1,4 @@
-// deno install --allow-read --allow-write --allow-run -n deno_tag -f ./tag.ts
+// deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f ./tag.ts
 import { runTasks } from "../lib/task.ts";
 import { isFileExist } from "../lib/utils.ts";
 import { scriptsPath } from "./globals.ts";
@@ -33,6 +33,7 @@ if (import.meta.main) {
     const isExistScripts = isFileExist(scriptsPath);
     if (isExistScripts) {
       const version = await changeVersion();
+
       msg = Deno.args[1] || version;
       const args = Deno.args;
       let newVersion = version;

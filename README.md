@@ -9,7 +9,7 @@
 安装：
 
 ```
-deno install --allow-read --allow-write --allow-run -n deno_tag -f https://deno.land/x/jw_cli@v0.2.4/cli/tag.ts
+deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f https://deno.land/x/jw_cli@v0.2.4/cli/tag.ts
 ```
 
 使用：
