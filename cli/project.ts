@@ -23,7 +23,12 @@ async function writeScripts(name: string) {
   console.log(`【${scriptsPath}】 will be changed`);
   const realPath = join(name, scriptsPath);
   const str = await Deno.readTextFile(realPath);
-  let newStr = str.replace(/version:\s*\d+\.\d+\.\d+/g, "version: 1.0.0");
+  const reg = /version:\s+/g;
+  let newStr = str;
+  if (reg.test(str)) {
+    newStr = str.replace(reg, "template_version: ");
+  }
+  newStr = "version: 1.0.0" + "\n" + newStr;
   const nameReg = new RegExp(`name: ${templateName}`);
   newStr = newStr.replace(nameReg, `name: ${name}`);
   await Deno.writeTextFile(realPath, newStr);
