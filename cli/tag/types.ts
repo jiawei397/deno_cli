@@ -12,6 +12,11 @@ export interface TagParams {
   V: string;
   msg: string;
   M: string;
+  path: string;
+  P: string; // 查找readme.md的目录
+
+  deep: boolean;
+  D: boolean; // 是否递归查找readme.md
 }
 
 export interface Package {

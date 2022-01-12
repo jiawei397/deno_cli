@@ -2,7 +2,7 @@
 // 这个文件专门处理deno的变更
 import { runTasks } from "../../lib/task.ts";
 import { isFileExist } from "../../lib/utils.ts";
-import { YamlLoader } from "../../deps.ts";
+import { expandGlob, relative, resolve, YamlLoader } from "../../deps.ts";
 import { readmePath, scriptsPath } from "../globals.ts";
 import { Package, VersionAction } from "./types.ts";
 
@@ -73,7 +73,7 @@ async function writeScripts(version: string) {
   await Deno.writeTextFile(scriptsPath, newStr);
 }
 
-async function writeReadme(version: string, pkg: Package, path = readmePath) {
+async function writeReadme(version: string, pkg: Package, path: string) {
   if (!isFileExist(path)) {
     console.warn(`没有找到【${path}】`);
     return;
@@ -90,14 +90,43 @@ async function writeReadme(version: string, pkg: Package, path = readmePath) {
   await Deno.writeTextFile(path, newDoc);
 }
 
-export async function changeVersion(action: VersionAction | string) {
+async function findAllReadme(childDir = "") {
+  const paths = [];
+  for await (
+    const file of expandGlob(resolve(childDir, "**/*.md"))
+  ) {
+    if (/readme.*.md/i.test(file.name)) {
+      paths.push(relative(Deno.cwd(), file.path));
+    }
+  }
+
+  return paths;
+}
+
+export async function changeVersion(
+  action: VersionAction | string,
+  options: {
+    childDir: string;
+    isDeep: boolean;
+  },
+) {
   const pkg = await getPkg();
   const version = formatVersion(pkg, action);
   await writeScripts(version);
-  await writeReadme(version, pkg);
+
+  let readmePaths: string = readmePath;
+  if (options.isDeep) {
+    const paths = await findAllReadme(options.childDir);
+    await Promise.all(paths.map((readmePath) => {
+      return writeReadme(version, pkg, readmePath);
+    }));
+    readmePaths = paths.join(" ");
+  } else {
+    await writeReadme(version, pkg, readmePath);
+  }
 
   const arr = [
-    `git add ${scriptsPath} ${readmePath}`,
+    `git add ${scriptsPath} ${readmePaths}`,
     `git commit -m ${version}`,
   ];
   await runTasks(arr);

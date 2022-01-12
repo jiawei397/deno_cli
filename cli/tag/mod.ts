@@ -17,7 +17,7 @@ async function tagNode(params: TagParams) {
   const versionAction = params._.length ? params._[0] : VersionAction.patch;
   await runTasks([`npm version ${versionAction}`]);
   const version = await getNodeVersion();
-  return tag(version, version);
+  return tag(version, getMsg(params, version));
 }
 
 async function tag(version: string, msg: string) {
@@ -28,13 +28,20 @@ async function tag(version: string, msg: string) {
   await runTasks(arr);
 }
 
+function getMsg(params: TagParams, version: string) {
+  return params.msg || params.M || version;
+}
+
 async function tagDeno(params: TagParams) {
   const isExistScripts = isFileExist(scriptsPath);
   if (isExistScripts) {
     const action = params.version || params.V ||
       (params._.length > 0 ? params._[0] : VersionAction.patch);
-    const version = await changeVersion(action);
-    const msg = params.msg || params.M || version;
+    const version = await changeVersion(action, {
+      isDeep: params.deep || params.D,
+      childDir: params.path || params.P,
+    });
+    const msg = getMsg(params, version);
     const isStartsWithV = !(params.local || params.L); // 版本号开头要不要加v，默认是带的
     let newVersion = version;
     if (!isStartsWithV) { // 代表是local本地，版本不允许有v
@@ -48,7 +55,7 @@ async function tagDeno(params: TagParams) {
   } else {
     const version = params.version || params.V;
     if (version) {
-      await tag(version, params.msg || params.M || version);
+      await tag(version, getMsg(params, version));
     } else {
       console.error("需要传递--version或-V参数");
       Deno.exit(1);

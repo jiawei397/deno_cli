@@ -4,6 +4,8 @@ export {
   basename,
   extname,
   join,
+  relative,
+  resolve,
 } from "https://deno.land/std@0.120.0/path/mod.ts";
 
 export { Ask };
@@ -11,3 +13,5 @@ export { Ask };
 export { compress, decompress } from "https://deno.land/x/zip@v1.2.2/mod.ts";
 
 export { parse } from "https://deno.land/std@0.120.0/flags/mod.ts";
+
+export { expandGlob } from "https://deno.land/std@0.120.0/fs/mod.ts";
