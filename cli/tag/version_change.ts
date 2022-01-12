@@ -1,23 +1,13 @@
-// deno_tag patch 'feat: xxx'
+// deno_tag patch -M 'feat: xxx'
 // 这个文件专门处理deno的变更
-import { runTasks } from "../lib/task.ts";
-import { isFileExist } from "../lib/utils.ts";
-import { YamlLoader } from "../deps.ts";
-import { readmePath, scriptsPath } from "./globals.ts";
-
-// deno_tag patch
-const actions = ["patch", "minor", "major"];
-
-interface Package {
-  version: string;
-  name: string;
-
-  [K: string]: unknown;
-}
+import { runTasks } from "../../lib/task.ts";
+import { isFileExist } from "../../lib/utils.ts";
+import { YamlLoader } from "../../deps.ts";
+import { readmePath, scriptsPath } from "../globals.ts";
+import { Package, VersionAction } from "./types.ts";
 
 async function getPkg() {
   const yaml = new YamlLoader();
-
   const pkgMap = await yaml.parseFile(scriptsPath) as Package;
 
   if (pkgMap.version) {
@@ -33,35 +23,37 @@ async function getPkg() {
   return pkgMap;
 }
 
-function formatVersion(pkg: Package) {
-  // console.log(Deno.args);
-  let first = Deno.args[0];
-  if (first === "-L" || first === "--local") {
-    first = "";
+/**
+ * 获取新的版本号
+ * @param versionAction
+ * @param oldversionAction 例：1.0.1
+ * @returns
+ */
+function getNewVersion(versionAction: VersionAction, oldversionAction: string) {
+  const arr = oldversionAction.split(".");
+  let changedIndex = 0;
+  if (versionAction === "patch") {
+    changedIndex = 2;
+  } else if (versionAction === "minor") {
+    changedIndex = 1;
+    arr[2] = "0";
+  } else {
+    arr[2] = arr[1] = "0";
   }
-  const versionAction = first || actions[0];
+  if (changedIndex !== -1) {
+    arr[changedIndex] = (Number(arr[changedIndex]) + 1) + "";
+  }
+  return arr.join(".");
+}
+
+function formatVersion(pkg: Package, versionAction: VersionAction | string) {
   let version = versionAction;
-
+  const actions: string[] = Object.values(VersionAction);
   if (actions.includes(versionAction)) { // 意味着要变更版本
-    const oldversionAction = pkg.version;
-
-    const arr = oldversionAction.split(".");
-    let changedIndex = 0;
-    if (versionAction === "patch") {
-      changedIndex = 2;
-    } else if (versionAction === "minor") {
-      changedIndex = 1;
-      arr[2] = "0";
-    } else {
-      arr[2] = arr[1] = "0";
-    }
-    if (changedIndex !== -1) {
-      arr[changedIndex] = (Number(arr[changedIndex]) + 1) + "";
-    }
-    version = arr.join(".");
+    version = getNewVersion(versionAction as VersionAction, pkg.version);
   } else {
     if (version.startsWith("v")) {
-      version = version.substr(1);
+      version = version.substring(1);
     }
   }
 
@@ -81,9 +73,9 @@ async function writeScripts(version: string) {
   await Deno.writeTextFile(scriptsPath, newStr);
 }
 
-async function writeReadme(version: string, pkg: Package) {
-  if (!isFileExist(readmePath)) {
-    console.warn(`没有找到【${readmePath}】`);
+async function writeReadme(version: string, pkg: Package, path = readmePath) {
+  if (!isFileExist(path)) {
+    console.warn(`没有找到【${path}】`);
     return;
   }
 
@@ -92,15 +84,15 @@ async function writeReadme(version: string, pkg: Package) {
     return;
   }
 
-  const doc = await Deno.readTextFile(readmePath);
+  const doc = await Deno.readTextFile(path);
   const reg = new RegExp(pkg.name + "@v(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})", "g");
   const newDoc = doc.replace(reg, pkg.name + "@v" + version);
-  await Deno.writeTextFile(readmePath, newDoc);
+  await Deno.writeTextFile(path, newDoc);
 }
 
-export async function changeVersion() {
+export async function changeVersion(action: VersionAction | string) {
   const pkg = await getPkg();
-  const version = formatVersion(pkg);
+  const version = formatVersion(pkg, action);
   await writeScripts(version);
   await writeReadme(version, pkg);
 

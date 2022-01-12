@@ -3,33 +3,39 @@
 - [x] task
 - [x] tag
 - [x] hosts
+- [x] 下载资源
+- [x] 脚手架，安装基于oak_nest、mongo的简单web工程
 
 ## 给deno或nodejs项目打标签
 
 安装：
 
 ```
-deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f https://deno.land/x/jw_cli@v0.2.5/cli/tag.ts
+deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f https://deno.land/x/jw_cli@v0.2.5/cli/tag/mod.ts
 ```
 
-使用：
+### nodejs项目
 
-1. nodejs项目，在项目根目录下，执行
+在项目根目录下，执行
 
 ```
 deno_tag
 ```
 
-2. deno项目，在项目根目录下执行：
+### deno项目
+
+在项目根目录下执行：
 
 ```
-deno_tag 0.0.1
+deno_tag -V 0.0.1
+deno_tag --version 0.0.1
 ```
 
 或者
 
 ```
-deno_tag patch
+deno_tag
+deno_tag patch # 与上面等价
 deno_tag minor
 deno_tag major
 ```
@@ -37,6 +43,22 @@ deno_tag major
 会更新根目录下的`scripts.yml`文件和`README.md`，如果后者有使用`scripts.yml`中配置的`name`，将会对应替换。
 
 比如本工程的名称为`jw_cli`，那么本文件中`jw_cli@v0.2.5`都会对应替换为新的版本。
+
+#### 版本号不以v开头
+
+假设你推送的tag版本号不想以v开头，那么可以添加一个参数-L或者--local：
+
+```
+deno_tag patch -L
+```
+
+#### 添加自定义信息
+
+打标签时默认提交信息是版本号，如果想自定义信息，可以使用-M或者--msg：
+
+```
+deno_tag minor -M "feat: change some"
+```
 
 ## 写入本地hosts文件
 

@@ -4,8 +4,10 @@ export {
   basename,
   extname,
   join,
-} from "https://deno.land/std@0.115.1/path/mod.ts";
+} from "https://deno.land/std@0.120.0/path/mod.ts";
 
 export { Ask };
 
 export { compress, decompress } from "https://deno.land/x/zip@v1.2.2/mod.ts";
+
+export { parse } from "https://deno.land/std@0.120.0/flags/mod.ts";
