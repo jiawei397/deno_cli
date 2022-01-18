@@ -60,6 +60,14 @@ deno_tag patch -L
 deno_tag minor -M "feat: change some"
 ```
 
+#### 更新所有目录的README.md文件
+
+如果想要更新所有目录的README.md文件，可以使用-D或者--deep：
+
+```
+deno_tag -D
+```
+
 ## 写入本地hosts文件
 
 开发一个网站，本地需要频繁修改hosts
