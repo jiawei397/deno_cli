@@ -134,6 +134,22 @@ deno compile --unstable --allow-write --allow-read --allow-net --allow-run https
 
 ## 校验deps.ts文件是否有未带版本号
 
+安装
+
 ```
 deno install  --allow-read --allow-env -n deno_valid -f  https://deno.land/x/jw_cli@v0.2.7/cli/valid_deps.ts
+```
+
+## 增加git commit hook
+
+安装
+
+```
+deno install  --allow-write  -n deno_hook -f  https://deno.land/x/jw_cli@v0.2.7/cli/git_hook.ts
+```
+
+也可以直接运行
+
+```
+deno run --allow-write https://deno.land/x/jw_cli@v0.2.7/cli/git_hook.ts
 ```
