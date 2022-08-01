@@ -120,10 +120,11 @@ deno install --allow-write --allow-read --allow-net --allow-run --unstable -n de
 之后执行：
 
 ```
+deno_cli 你的工程名称
+
+# 或者在交互页面里输入工程名称
 deno_cli
 ```
-
-输入你的工程名称即可。
 
 也可以编译为可执行文件：
 

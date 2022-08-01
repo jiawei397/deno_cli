@@ -47,15 +47,18 @@ async function writeReadme(name: string) {
 }
 
 async function main() {
-  const answers: any = await ask.prompt([
-    {
-      name: "name",
-      type: "input",
-      message: "projectName:",
-    },
-  ]);
-
-  const { name } = answers as Params;
+  let name = Deno.args[0];
+  if (!name) {
+    // deno-lint-ignore no-explicit-any
+    const answers: any = await ask.prompt([
+      {
+        name: "name",
+        type: "input",
+        message: "projectName:",
+      },
+    ]);
+    name = (answers as Params).name;
+  }
 
   await download(url, zipName);
   await decompress(zipName, "./");

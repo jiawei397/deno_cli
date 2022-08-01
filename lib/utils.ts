@@ -15,5 +15,5 @@ export async function download(url: string, fileName: string) {
     },
   });
   const buffer = await response.arrayBuffer();
-  return await Deno.writeFile(fileName, new Uint8Array(buffer));
+  return Deno.writeFile(fileName, new Uint8Array(buffer));
 }
