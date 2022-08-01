@@ -11,7 +11,7 @@
 安装：
 
 ```
-deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f https://deno.land/x/jw_cli@v0.3.0/cli/tag/mod.ts
+deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f https://deno.land/x/jw_cli@v0.3.1/cli/tag/mod.ts
 ```
 
 ### nodejs项目
@@ -42,7 +42,7 @@ deno_tag major
 
 会更新根目录下的`scripts.yml`文件和`README.md`，如果后者有使用`scripts.yml`中配置的`name`，将会对应替换。
 
-比如本工程的名称为`jw_cli`，那么本文件中`jw_cli@v0.3.0`都会对应替换为新的版本。
+比如本工程的名称为`jw_cli`，那么本文件中`jw_cli@v0.3.1`都会对应替换为新的版本。
 
 #### 版本号不以v开头
 
@@ -75,7 +75,7 @@ deno_tag -D
 安装：
 
 ```
-deno install --allow-write --allow-read -n deno_wiki -f https://deno.land/x/jw_cli@v0.3.0/cli/hosts.ts
+deno install --allow-write --allow-read -n deno_wiki -f https://deno.land/x/jw_cli@v0.3.1/cli/hosts.ts
 ```
 
 使用：
@@ -91,7 +91,7 @@ sudo deno_wiki false
 ## 下载资源
 
 ```
-deno install --allow-write --allow-read --allow-net --unstable -n deno_down -f https://deno.land/x/jw_cli@v0.3.0/cli/download.ts
+deno install --allow-write --allow-read --allow-net --unstable -n deno_down -f https://deno.land/x/jw_cli@v0.3.1/cli/download.ts
 ```
 
 之后执行：
@@ -105,8 +105,8 @@ deno_down
 也可以编译为可执行文件：
 
 ```
-deno compile --unstable --allow-write --allow-read --allow-net --target x86_64-pc-windows-msvc https://deno.land/x/jw_cli@v0.3.0/cli/download.ts
-deno compile --unstable --allow-write --allow-read --allow-net https://deno.land/x/jw_cli@v0.3.0/cli/download.ts
+deno compile --unstable --allow-write --allow-read --allow-net --target x86_64-pc-windows-msvc https://deno.land/x/jw_cli@v0.3.1/cli/download.ts
+deno compile --unstable --allow-write --allow-read --allow-net https://deno.land/x/jw_cli@v0.3.1/cli/download.ts
 ```
 
 ## 下载deno模板工程
@@ -114,7 +114,7 @@ deno compile --unstable --allow-write --allow-read --allow-net https://deno.land
 模板工程是依赖于`oak`与`oak_nest`，包含日志、全局异常捕获以及我们的业务`sso`校验，数据库使用`mongodb`，工程运行推荐使用`denon`，`CICD`配置了`.gitlab-ci.yaml`文件，可自动发布部署到我们的`gitlab`。
 
 ```
-deno install --allow-write --allow-read --allow-net --allow-run --unstable -n deno_cli -f https://deno.land/x/jw_cli@v0.3.0/cli/project.ts
+deno install --allow-write --allow-read --allow-net --allow-run --unstable -n deno_cli -f https://deno.land/x/jw_cli@v0.3.1/cli/project.ts
 ```
 
 之后执行：
@@ -129,8 +129,8 @@ deno_cli
 也可以编译为可执行文件：
 
 ```
-deno compile --unstable --allow-write --allow-read --allow-net --allow-run --target x86_64-pc-windows-msvc https://deno.land/x/jw_cli@v0.3.0/cli/project.ts
-deno compile --unstable --allow-write --allow-read --allow-net --allow-run https://deno.land/x/jw_cli@v0.3.0/cli/project.ts
+deno compile --unstable --allow-write --allow-read --allow-net --allow-run --target x86_64-pc-windows-msvc https://deno.land/x/jw_cli@v0.3.1/cli/project.ts
+deno compile --unstable --allow-write --allow-read --allow-net --allow-run https://deno.land/x/jw_cli@v0.3.1/cli/project.ts
 ```
 
 ## 校验deps.ts文件是否有未带版本号
@@ -138,7 +138,7 @@ deno compile --unstable --allow-write --allow-read --allow-net --allow-run https
 安装
 
 ```
-deno install  --allow-read --allow-env -n deno_valid -f  https://deno.land/x/jw_cli@v0.3.0/cli/valid_deps.ts
+deno install  --allow-read --allow-env -n deno_valid -f  https://deno.land/x/jw_cli@v0.3.1/cli/valid_deps.ts
 ```
 
 ## 增加git commit hook
@@ -146,11 +146,11 @@ deno install  --allow-read --allow-env -n deno_valid -f  https://deno.land/x/jw_
 安装
 
 ```
-deno install  --allow-write  -n deno_hook -f  https://deno.land/x/jw_cli@v0.3.0/cli/git_hook.ts
+deno install  --allow-write  -n deno_hook -f  https://deno.land/x/jw_cli@v0.3.1/cli/git_hook.ts
 ```
 
 也可以直接运行
 
 ```
-deno run --allow-write https://deno.land/x/jw_cli@v0.3.0/cli/git_hook.ts
+deno run --allow-write https://deno.land/x/jw_cli@v0.3.1/cli/git_hook.ts
 ```
