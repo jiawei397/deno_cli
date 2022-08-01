@@ -1,7 +1,7 @@
 // deno compile --unstable --allow-write --allow-read --allow-net --target x86_64-pc-windows-msvc cli/project.ts
 // deno compile --unstable --allow-write --allow-read --allow-net cli/project.ts
 import { Ask, decompress, join } from "../deps.ts";
-import { download, isFileExist } from "../lib/utils.ts";
+import { download } from "../lib/utils.ts";
 import { readmePath, scriptsPath } from "./globals.ts";
 
 const ask = new Ask({
@@ -36,13 +36,12 @@ async function writeScripts(name: string) {
 
 async function writeReadme(name: string) {
   const realPath = join(name, readmePath);
-  if (!isFileExist(realPath)) {
+  const doc = await Deno.readTextFile(realPath).catch((_) => null);
+  if (!doc) {
     console.warn(`没有找到【${realPath}】`);
     return;
   }
-  const doc = await Deno.readTextFile(realPath);
-  const nameReg = new RegExp(templateName, "g");
-  const newDoc = doc.replace(nameReg, name);
+  const newDoc = doc.replaceAll(templateName, name);
   await Deno.writeTextFile(realPath, newDoc);
 }
 
