@@ -1,8 +1,15 @@
 // deno compile --unstable --allow-write --allow-read --allow-net --target x86_64-pc-windows-msvc cli/project.ts
 // deno compile --unstable --allow-write --allow-read --allow-net cli/project.ts
-import { Ask, decompress, join } from "../deps.ts";
+import {
+  applyEdits,
+  Ask,
+  decompress,
+  join,
+  modify,
+  parseJson,
+} from "../deps.ts";
 import { download } from "../lib/utils.ts";
-import { readmePath, scriptsPath } from "./globals.ts";
+import { readmePath } from "./globals.ts";
 
 const ask = new Ask({
   prefix: ">",
@@ -19,19 +26,37 @@ const url =
 const zipName = projectName + ".zip";
 const templateName = projectName;
 
-async function writeScripts(name: string) {
-  console.log(`【${scriptsPath}】 will be changed`);
-  const realPath = join(name, scriptsPath);
-  const str = await Deno.readTextFile(realPath);
-  const reg = /version:\s+/g;
-  let newStr = str;
-  if (reg.test(str)) {
-    newStr = str.replace(reg, "template_version: ");
-  }
-  newStr = "version: 1.0.0" + "\n" + newStr;
-  const nameReg = new RegExp(`name: ${templateName}`);
-  newStr = newStr.replace(nameReg, `name: ${name}`);
-  await Deno.writeTextFile(realPath, newStr);
+function modifyAndFormat(text: string, key: string, value: string): string {
+  const modifyVersion = modify(text, [key], value, {
+    formattingOptions: {
+      insertSpaces: true,
+      tabSize: 2,
+    },
+  });
+  return applyEdits(
+    text,
+    modifyVersion,
+  );
+}
+
+function modifyText(text: string, map: Record<string, string>) {
+  return Object.keys(map).reduce((acc, key) => {
+    return modifyAndFormat(acc, key, map[key]);
+  }, text);
+}
+
+async function writeDenoJson(name: string, denoJsonPath: string) {
+  console.log(`【${denoJsonPath} will be changed`);
+  const realPath = join(name, denoJsonPath);
+  let text = await Deno.readTextFile(realPath);
+  text = text.replace(templateName, name);
+  const pkg: { version: string } = parseJson(text);
+  const result = modifyText(text, {
+    name,
+    "version": "1.0.0",
+    "template_version": pkg.version,
+  });
+  await Deno.writeTextFile(realPath, result);
 }
 
 async function writeReadme(name: string) {
@@ -65,7 +90,7 @@ async function main() {
   await Deno.remove(zipName);
 
   await writeReadme(name);
-  await writeScripts(name);
+  await writeDenoJson(name, "deno.jsonc");
 
   console.log(`init project ${projectName} end`);
 }
