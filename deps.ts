@@ -15,3 +15,12 @@ export { compress, decompress } from "https://deno.land/x/zip@v1.2.2/mod.ts";
 export { parse } from "https://deno.land/std@0.120.0/flags/mod.ts";
 
 export { expandGlob } from "https://deno.land/std@0.120.0/fs/mod.ts";
+
+export {
+  applyEdits,
+  findNodeAtLocation,
+  getNodeValue,
+  modify,
+  parse as parseJson,
+  parseTree,
+} from "https://deno.land/x/jsonc@1/main.ts";

@@ -2,25 +2,26 @@
 // 这个文件专门处理deno的变更
 import { runTasks } from "../../lib/task.ts";
 import { isFileExist } from "../../lib/utils.ts";
-import { expandGlob, relative, resolve, YamlLoader } from "../../deps.ts";
+import {
+  applyEdits,
+  expandGlob,
+  modify,
+  parseJson,
+  relative,
+  resolve,
+  YamlLoader,
+} from "../../deps.ts";
 import { readmePath, scriptsPath } from "../globals.ts";
 import { Package, VersionAction } from "./types.ts";
 
-async function getPkg() {
+async function getPkgFromScripts() {
   const yaml = new YamlLoader();
-  const pkgMap = await yaml.parseFile(scriptsPath) as Package;
+  return await yaml.parseFile(scriptsPath) as Package;
+}
 
-  if (pkgMap.version) {
-    if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(pkgMap.version)) {
-      console.error(
-        `version [${pkgMap.version}] in [${scriptsPath}] is invalid`,
-      );
-      Deno.exit(1);
-    }
-  } else {
-    pkgMap.version = "0.0.0";
-  }
-  return pkgMap;
+async function getPkgFromDenoJson(denoJsonPath: string): Promise<Package> {
+  const text = await Deno.readTextFile(denoJsonPath);
+  return parseJson(text);
 }
 
 /**
@@ -46,17 +47,29 @@ function getNewVersion(versionAction: VersionAction, oldversionAction: string) {
   return arr.join(".");
 }
 
+function checkVersion(version: string) {
+  if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(version)) {
+    throw new Error(`version [${version}] is invalid`);
+  }
+}
+
+function getOldVersion(pkg: Package) {
+  return pkg.version || "0.0.0";
+}
+
 function formatVersion(pkg: Package, versionAction: VersionAction | string) {
   let version = versionAction;
   const actions: string[] = Object.values(VersionAction);
   if (actions.includes(versionAction)) { // 意味着要变更版本
-    version = getNewVersion(versionAction as VersionAction, pkg.version);
+    const oldVersion = getOldVersion(pkg);
+    checkVersion(oldVersion);
+    version = getNewVersion(versionAction as VersionAction, oldVersion);
   } else {
     if (version.startsWith("v")) {
       version = version.substring(1);
     }
+    checkVersion(version);
   }
-
   return version;
 }
 
@@ -71,6 +84,14 @@ async function writeScripts(version: string) {
     newStr = "version: " + version + "\n" + str;
   }
   await Deno.writeTextFile(scriptsPath, newStr);
+}
+
+async function writeDenoJson(version: string, denoJsonPath: string) {
+  console.log(`【${denoJsonPath}】version will be changed to ${version}`);
+  const text = await Deno.readTextFile(denoJsonPath);
+  const modifyVersion = modify(text, ["version"], version, {});
+  const result = applyEdits(text, modifyVersion);
+  await Deno.writeTextFile(denoJsonPath, result);
 }
 
 async function writeReadme(version: string, pkg: Package, path: string) {
@@ -108,17 +129,32 @@ export async function changeVersion(
   options: {
     childDir: string;
     isDeep: boolean;
+    denoJsonPath?: string;
   },
 ) {
-  const pkg = await getPkg();
+  let isFromDenoJson = false;
+  let pkg: Package | undefined;
+  const { denoJsonPath } = options;
+  if (denoJsonPath) {
+    pkg = await getPkgFromDenoJson(denoJsonPath);
+  }
+  if (!pkg || !pkg.version) { // 优先读取deno.json中version，没找到再去scripts中读取，将来考虑去掉scripts.yml
+    pkg = await getPkgFromScripts();
+  } else {
+    isFromDenoJson = true;
+  }
   const version = formatVersion(pkg, action);
-  await writeScripts(version);
+  if (isFromDenoJson) {
+    await writeDenoJson(version, denoJsonPath!);
+  } else {
+    await writeScripts(version);
+  }
 
   let readmePaths: string = readmePath;
   if (options.isDeep) {
     const paths = await findAllReadme(options.childDir);
     await Promise.all(paths.map((readmePath) => {
-      return writeReadme(version, pkg, readmePath);
+      return writeReadme(version, pkg!, readmePath);
     }));
     readmePaths = paths.join(" ");
   } else {
@@ -126,12 +162,10 @@ export async function changeVersion(
   }
 
   const arr = [
-    `git add ${scriptsPath} ${readmePaths}`,
+    `git add ${isFromDenoJson ? denoJsonPath : scriptsPath} ${readmePaths}`,
     `git commit -m ${version}`,
   ];
   await runTasks(arr);
 
   return version;
 }
-
-// changeVersion();

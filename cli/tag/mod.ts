@@ -17,50 +17,61 @@ async function tagNode(params: TagParams) {
   const versionAction = params._.length ? params._[0] : VersionAction.patch;
   await runTasks([`npm version ${versionAction}`]);
   const version = await getNodeVersion();
-  return tag(version, getMsg(params, version));
+  return tag(version, getMsg(params));
 }
 
-async function tag(version: string, msg: string) {
+async function tag(version: string, msg?: string) {
+  let cmd: string;
+  if (msg) {
+    cmd = `git tag -a ${version} -m "${msg}"`;
+  } else {
+    cmd = `git tag ${version}`;
+  }
   const arr = [
-    `git tag -a ${version} -m "${msg}"`,
+    cmd,
     `git push origin ${version}`,
   ];
   await runTasks(arr);
 }
 
-function getMsg(params: TagParams, version: string) {
-  return params.msg || params.M || version;
+function getMsg(params: TagParams): string | undefined {
+  return params.msg || params.M;
 }
 
 async function tagDeno(params: TagParams) {
-  const isExistScripts = isFileExist(scriptsPath);
-  if (isExistScripts) {
-    const action = params.version || params.V ||
-      (params._.length > 0 ? params._[0] : VersionAction.patch);
-    const version = await changeVersion(action, {
-      isDeep: params.deep || params.D,
-      childDir: params.path || params.P,
-    });
-    const msg = getMsg(params, version);
-    const isStartsWithV = !(params.local || params.L); // 版本号开头要不要加v，默认是带的
-    let newVersion = version;
-    if (!isStartsWithV) { // 代表是local本地，版本不允许有v
-      if (version.startsWith("v")) {
-        newVersion = version.substr(1);
-      }
-    } else { // 其余就添加v
-      newVersion = version.startsWith("v") ? version : ("v" + version);
-    }
-    await tag(newVersion, msg);
-  } else {
+  let denoJsonPath = "";
+  if (isFileExist("deno.jsonc")) {
+    denoJsonPath = "deno.jsonc";
+  } else if (isFileExist("deno.json")) {
+    denoJsonPath = "deno.json";
+  }
+  if (!denoJsonPath && !isFileExist(scriptsPath)) { // 这几个文件都没有
     const version = params.version || params.V;
     if (version) {
-      await tag(version, getMsg(params, version));
+      await tag(version, getMsg(params));
     } else {
-      console.error("需要传递--version或-V参数");
-      Deno.exit(1);
+      throw new Error("需要传递--version或-V参数");
     }
+    return;
   }
+  const action = params.version || params.V ||
+    (params._.length > 0 ? params._[0] : VersionAction.patch);
+  const version = await changeVersion(action, {
+    isDeep: params.deep || params.D,
+    childDir: params.path || params.P,
+    denoJsonPath,
+  });
+  const msg = getMsg(params);
+  const isStartsWithV = !(params.local || params.L); // 版本号开头要不要加v，默认是带的
+  let newVersion = version;
+  if (!isStartsWithV) { // 代表是local本地，版本不允许有v
+    if (version.startsWith("v")) {
+      newVersion = version.substring(1);
+    }
+  } else { // 其余就添加v
+    newVersion = version.startsWith("v") ? version : ("v" + version);
+  }
+  await tag(newVersion, msg);
 }
 
 if (import.meta.main) {
