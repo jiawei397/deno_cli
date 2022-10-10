@@ -24,3 +24,6 @@ export {
   parse as parseJson,
   parseTree,
 } from "https://deno.land/x/jsonc@1/main.ts";
+
+import toml from "https://esm.sh/v96/toml@3.0.0/es2022/toml.js";
+export { toml };

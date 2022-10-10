@@ -6,7 +6,7 @@
 - [x] 下载资源
 - [x] 脚手架，安装基于oak_nest、mongo的简单web工程
 
-## 给deno或nodejs项目打标签
+## 给deno或nodejs或Rust项目打标签
 
 安装：
 

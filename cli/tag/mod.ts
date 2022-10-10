@@ -1,8 +1,8 @@
 // deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f ./tag.ts
 import { runTasks } from "../../lib/task.ts";
 import { isFileExist } from "../../lib/utils.ts";
-import { scriptsPath } from "../globals.ts";
-import { changeVersion } from "./version_change.ts";
+import { cargoPath, scriptsPath } from "../globals.ts";
+import { changeDenoVersion, changeRustVersion } from "./version_change.ts";
 import { parse } from "../../deps.ts";
 import { TagParams, VersionAction } from "./types.ts";
 
@@ -56,7 +56,7 @@ async function tagDeno(params: TagParams) {
   }
   const action = params.version || params.V ||
     (params._.length > 0 ? params._[0] : VersionAction.patch);
-  const version = await changeVersion(action, {
+  const version = await changeDenoVersion(action, {
     isDeep: params.deep || params.D,
     childDir: params.path || params.P,
     denoJsonPath,
@@ -74,11 +74,20 @@ async function tagDeno(params: TagParams) {
   await tag(newVersion, msg);
 }
 
+async function tagRust(params: TagParams) {
+  const action = params.version || params.V ||
+    (params._.length > 0 ? params._[0] : VersionAction.patch);
+  const version = await changeRustVersion(action);
+  const msg = getMsg(params);
+  await tag(version, msg);
+}
+
 if (import.meta.main) {
-  const isExistPkg = isFileExist("package.json");
   const params = parse(Deno.args) as TagParams;
-  if (isExistPkg) {
+  if (isFileExist("package.json")) {
     tagNode(params);
+  } else if (isFileExist(cargoPath)) {
+    tagRust(params);
   } else {
     tagDeno(params);
   }

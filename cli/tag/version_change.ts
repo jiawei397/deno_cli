@@ -9,10 +9,11 @@ import {
   parseJson,
   relative,
   resolve,
+  toml,
   YamlLoader,
 } from "../../deps.ts";
-import { readmePath, scriptsPath } from "../globals.ts";
-import { Package, VersionAction } from "./types.ts";
+import { cargoPath, readmePath, scriptsPath } from "../globals.ts";
+import { Package, RustToml, VersionAction } from "./types.ts";
 
 async function getPkgFromScripts() {
   const yaml = new YamlLoader();
@@ -124,7 +125,7 @@ async function findAllReadme(childDir = "") {
   return paths;
 }
 
-export async function changeVersion(
+export async function changeDenoVersion(
   action: VersionAction | string,
   options: {
     childDir: string;
@@ -163,6 +164,33 @@ export async function changeVersion(
 
   const arr = [
     `git add ${isFromDenoJson ? denoJsonPath : scriptsPath} ${readmePaths}`,
+    `git commit -m ${version}`,
+  ];
+  await runTasks(arr);
+
+  return version;
+}
+
+async function writeRustToml(version: string) {
+  const str = Deno.readTextFileSync(cargoPath);
+  const result = str.replace(
+    /version = "\d{1,3}\.\d{1,3}\.\d{1,3}"/,
+    `version = "${version}"`,
+  );
+  await Deno.writeTextFile(cargoPath, result);
+}
+
+export async function changeRustVersion(
+  action: VersionAction | string,
+) {
+  const str = Deno.readTextFileSync(cargoPath);
+  const data: RustToml = toml.parse(str);
+  console.log(`读到版本号：${data.package.version}`);
+  const version = formatVersion(data.package, action);
+  await writeRustToml(version);
+
+  const arr = [
+    `git add ${cargoPath}`,
     `git commit -m ${version}`,
   ];
   await runTasks(arr);
