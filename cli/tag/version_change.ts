@@ -12,7 +12,12 @@ import {
   toml,
   YamlLoader,
 } from "../../deps.ts";
-import { cargoPath, readmePath, scriptsPath } from "../globals.ts";
+import {
+  cargoLockPath,
+  cargoPath,
+  readmePath,
+  scriptsPath,
+} from "../globals.ts";
 import { Package, RustToml, VersionAction } from "./types.ts";
 
 async function getPkgFromScripts() {
@@ -171,7 +176,7 @@ export async function changeDenoVersion(
   return version;
 }
 
-async function writeRustToml(version: string) {
+async function writeRustToml(version: string, cargoPath: string) {
   const str = Deno.readTextFileSync(cargoPath);
   const result = str.replace(
     /version = "\d{1,3}\.\d{1,3}\.\d{1,3}"/,
@@ -180,17 +185,30 @@ async function writeRustToml(version: string) {
   await Deno.writeTextFile(cargoPath, result);
 }
 
+async function writeRustLock(
+  version: string,
+  name: string,
+  cargoLockPath: string,
+) {
+  const str = Deno.readTextFileSync(cargoLockPath);
+  const reg = new RegExp(`name = "${name}"\\nversion = "(\.*)"`);
+  const result = str.replace(reg, `name = "${name}"\nversion = "${version}"`);
+  await Deno.writeTextFile(cargoLockPath, result);
+}
+
 export async function changeRustVersion(
   action: VersionAction | string,
 ) {
   const str = Deno.readTextFileSync(cargoPath);
   const data: RustToml = toml.parse(str);
-  console.log(`读到版本号：${data.package.version}`);
+  const { name, version: oldVersion } = data.package;
+  console.log(`读到工程名：${name} 与版本号：${oldVersion}`);
   const version = formatVersion(data.package, action);
-  await writeRustToml(version);
+  await writeRustToml(version, cargoPath);
+  await writeRustLock(version, name, cargoLockPath);
 
   const arr = [
-    `git add ${cargoPath}`,
+    `git add ${cargoPath} ${cargoLockPath}`,
     `git commit -m ${version}`,
   ];
   await runTasks(arr);
