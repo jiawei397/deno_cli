@@ -111,24 +111,30 @@ deno compile --unstable --allow-write --allow-read --allow-net https://deno.land
 
 ## 下载deno模板工程
 
-模板工程是依赖于`oak`与`oak_nest`，包含日志、全局异常捕获以及我们的业务`sso`校验，数据库使用`mongodb`，工程运行推荐使用`denon`，`CICD`配置了`.gitlab-ci.yaml`文件，可自动发布部署到我们的`gitlab`。
+模板工程是依赖于`oak`与`oak_nest`，包含日志、全局异常捕获以及我们的业务`sso`校验，数据库使用`mongodb`，`CICD`配置了`.gitlab-ci.yaml`文件，可自动发布部署到我们的`gitlab`。
 
-```
+```bash
 deno install --allow-write --allow-read --allow-net --allow-run --unstable -n deno_cli -f https://deno.land/x/jw_cli@v0.5.1/cli/project.ts
 ```
 
 之后执行：
 
-```
+```bash
 deno_cli 你的工程名称
 
 # 或者在交互页面里输入工程名称
 deno_cli
 ```
 
+或者跳过全局安装，直接执行：
+
+```bash
+deno run --allow-write --allow-read --allow-net --allow-run --unstable  https://deno.land/x/jw_cli@v0.5.1/cli/project.ts 你的工程名称
+```
+
 也可以编译为可执行文件：
 
-```
+```bash
 deno compile --unstable --allow-write --allow-read --allow-net --allow-run --target x86_64-pc-windows-msvc https://deno.land/x/jw_cli@v0.5.1/cli/project.ts
 deno compile --unstable --allow-write --allow-read --allow-net --allow-run https://deno.land/x/jw_cli@v0.5.1/cli/project.ts
 ```
