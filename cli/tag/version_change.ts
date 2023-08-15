@@ -9,7 +9,7 @@ import {
   parseJson,
   relative,
   resolve,
-  toml,
+  parseToml,
   YamlLoader,
 } from "../../deps.ts";
 import {
@@ -200,7 +200,7 @@ export async function changeRustVersion(
   action: VersionAction | string,
 ) {
   const str = Deno.readTextFileSync(cargoPath);
-  const data: RustToml = toml.parse(str);
+  const data: RustToml = parseToml(str);
   const { name, version: oldVersion } = data.package;
   console.log(`读到工程名：${name} 与版本号：${oldVersion}`);
   const version = formatVersion(data.package, action);

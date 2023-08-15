@@ -25,5 +25,4 @@ export {
   parseTree,
 } from "https://deno.land/x/jsonc@1/main.ts";
 
-import toml from "https://esm.sh/toml@3.0.0";
-export { toml };
+export { parse as parseToml, stringify as stringifyToml } from "https://deno.land/std@0.194.0/toml/mod.ts";
