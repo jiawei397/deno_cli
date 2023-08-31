@@ -1,17 +1,13 @@
 const runTask = async (str: string) => {
-  const p = Deno.run({
-    cmd: str.split(" "),
-    stdout: "piped",
-    stderr: "piped",
+  const [cmd, ...args] = str.split(" ");
+  const command = new Deno.Command(cmd, {
+    args,
   });
-  const { code } = await p.status();
+  const { code, stdout, stderr } = await command.output();
   if (code === 0) {
-    const rawOutput = await p.output();
-    await Deno.stdout.write(rawOutput);
+    await Deno.stdout.write(stdout);
   } else {
-    const rawError = await p.stderrOutput();
-    const errorString = new TextDecoder().decode(rawError);
-    console.log(errorString);
+    console.error(stderr);
   }
   return code;
 };
@@ -25,6 +21,6 @@ const runTasks = async function (arr: string[]) {
       Deno.exit(code);
     }
   }
-}
+};
 
 export { runTask, runTasks };
