@@ -1,7 +1,7 @@
-// deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f ./tag.ts
+// deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f ./mod.ts
 import { runTasks } from "../../lib/task.ts";
 import { isFileExist } from "../../lib/utils.ts";
-import { cargoPath, scriptsPath } from "../globals.ts";
+import { cargoPath } from "../globals.ts";
 import { changeDenoVersion, changeRustVersion } from "./version_change.ts";
 import { parse } from "../../deps.ts";
 import { TagParams, VersionAction } from "./types.ts";
@@ -45,7 +45,7 @@ async function tagDeno(params: TagParams) {
   } else if (isFileExist("deno.json")) {
     denoJsonPath = "deno.json";
   }
-  if (!denoJsonPath && !isFileExist(scriptsPath)) { // 这几个文件都没有
+  if (!denoJsonPath) { // 这几个文件都没有
     const version = params.version || params.V;
     if (version) {
       await tag(version, getMsg(params));

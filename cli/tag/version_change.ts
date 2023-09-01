@@ -10,20 +10,13 @@ import {
   relative,
   resolve,
   parseToml,
-  YamlLoader,
 } from "../../deps.ts";
 import {
   cargoLockPath,
   cargoPath,
   readmePath,
-  scriptsPath,
 } from "../globals.ts";
 import { Package, RustToml, VersionAction } from "./types.ts";
-
-async function getPkgFromScripts() {
-  const yaml = new YamlLoader();
-  return await yaml.parseFile(scriptsPath) as Package;
-}
 
 async function getPkgFromDenoJson(denoJsonPath: string): Promise<Package> {
   const text = await Deno.readTextFile(denoJsonPath);
@@ -79,19 +72,6 @@ function formatVersion(pkg: Package, versionAction: VersionAction | string) {
   return version;
 }
 
-async function writeScripts(version: string) {
-  console.log(`【${scriptsPath}】version will be changed to ${version}`);
-  const str = await Deno.readTextFile(scriptsPath);
-  const reg = /version:\s*\d+\.\d+\.\d+/g;
-  let newStr: string;
-  if (reg.test(str)) {
-    newStr = str.replace(reg, "version: " + version);
-  } else {
-    newStr = "version: " + version + "\n" + str;
-  }
-  await Deno.writeTextFile(scriptsPath, newStr);
-}
-
 async function writeDenoJson(version: string, denoJsonPath: string) {
   console.log(`【${denoJsonPath}】version will be changed to ${version}`);
   const text = await Deno.readTextFile(denoJsonPath);
@@ -107,7 +87,7 @@ async function writeReadme(version: string, pkg: Package, path: string) {
   }
 
   if (!pkg.name) {
-    console.warn(`【${scriptsPath}】中没有找到name`);
+    console.warn(`package中没有找到name`);
     return;
   }
 
@@ -135,26 +115,13 @@ export async function changeDenoVersion(
   options: {
     childDir: string;
     isDeep: boolean;
-    denoJsonPath?: string;
+    denoJsonPath: string;
   },
 ) {
-  let isFromDenoJson = false;
-  let pkg: Package | undefined;
   const { denoJsonPath } = options;
-  if (denoJsonPath) {
-    pkg = await getPkgFromDenoJson(denoJsonPath);
-  }
-  if (!pkg || !pkg.version) { // 优先读取deno.json中version，没找到再去scripts中读取，将来考虑去掉scripts.yml
-    pkg = await getPkgFromScripts();
-  } else {
-    isFromDenoJson = true;
-  }
+  const pkg = await getPkgFromDenoJson(denoJsonPath);
   const version = formatVersion(pkg, action);
-  if (isFromDenoJson) {
-    await writeDenoJson(version, denoJsonPath!);
-  } else {
-    await writeScripts(version);
-  }
+  await writeDenoJson(version, denoJsonPath!);
 
   let readmePaths: string = readmePath;
   if (options.isDeep) {
@@ -168,7 +135,7 @@ export async function changeDenoVersion(
   }
 
   const arr = [
-    `git add ${isFromDenoJson ? denoJsonPath : scriptsPath} ${readmePaths}`,
+    `git add ${denoJsonPath} ${readmePaths}`,
     `git commit -m ${version}`,
   ];
   await runTasks(arr);
@@ -200,7 +167,7 @@ export async function changeRustVersion(
   action: VersionAction | string,
 ) {
   const str = Deno.readTextFileSync(cargoPath);
-  const data: RustToml = parseToml(str);
+  const data = parseToml(str) as unknown as RustToml;
   const { name, version: oldVersion } = data.package;
   console.log(`读到工程名：${name} 与版本号：${oldVersion}`);
   const version = formatVersion(data.package, action);

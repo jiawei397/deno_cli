@@ -28,4 +28,5 @@ export interface Package {
 
 export interface RustToml {
   package: Package;
+  [K: string]: unknown;
 }

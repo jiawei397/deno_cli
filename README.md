@@ -40,7 +40,7 @@ deno_tag minor
 deno_tag major
 ```
 
-会更新根目录下以下文件的版本号：`deno.jsonc`或`deno.json`或`scripts.yml`文件（这3个文件有优先级），以及`README.md`，如果后者有使用前三者之一中配置的`name`，将会对应替换。
+会更新根目录下以下文件的版本号：`deno.jsonc`或`deno.json`文件，以及`README.md`，如果后者有使用前三者之一中配置的`name`，将会对应替换。
 
 比如本工程的名称为`jw_cli`，那么本文件中`jw_cli@v0.7.0`都会对应替换为新的版本。
 

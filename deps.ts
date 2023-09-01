@@ -1,4 +1,3 @@
-export { YamlLoader } from "https://deno.land/x/yaml_loader@v0.1.0/mod.ts";
 import Ask from "https://deno.land/x/ask@1.0.6/mod.ts";
 export {
   basename,
