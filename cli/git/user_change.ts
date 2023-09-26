@@ -1,4 +1,4 @@
-// deno install --allow-run --allow-net --unstable -n gum  -f ./cli/git/user_change.ts
+// deno install --allow-run --allow-net --allow-read --unstable -n gum  -f ./cli/git/user_change.ts
 import { runTask, runTasks } from "../../lib/task.ts";
 import { Input } from "https://deno.land/x/cliffy@v1.0.0-rc.3/prompt/mod.ts";
 import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
@@ -153,8 +153,8 @@ if (import.meta.main) {
 
   const upgrade = new UpgradeCommand({
     main: "cli/git/user_change.ts",
-    args: ["--allow-net", "--allow-run"],
-    provider: new DenoLandProvider(),
+    args: ["--allow-net", "--allow-run", "--unstable"],
+    provider: new DenoLandProvider({ name: "jw_cli" }),
   });
 
   await new Command()
