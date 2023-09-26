@@ -1,26 +1,30 @@
-const runTask = async (str: string) => {
+export const runTask = async (str: string, isShowLog = true) => {
   const [cmd, ...args] = str.split(" ");
   const command = new Deno.Command(cmd, {
     args,
   });
   const { code, stdout, stderr } = await command.output();
   if (code === 0) {
-    await Deno.stdout.write(stdout);
+    if (isShowLog) {
+      await Deno.stdout.write(stdout);
+    }
   } else {
     console.error(stderr);
   }
-  return code;
+  return { code, stdout, stderr };
 };
 
-const runTasks = async function (arr: string[]) {
+export const runTasks = async function (arr: string[], isShowLog = true) {
   for (const str of arr) {
-    console.log(`运行任务：${str}`);
-    const code = await runTask(str);
-    console.log(`任务结束：${str}`);
+    if (isShowLog) {
+      console.log(`运行任务：${str}`);
+    }
+    const { code } = await runTask(str);
+    if (isShowLog) {
+      console.log(`任务结束：${str}`);
+    }
     if (code) {
       Deno.exit(code);
     }
   }
 };
-
-export { runTask, runTasks };

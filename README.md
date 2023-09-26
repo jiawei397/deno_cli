@@ -90,13 +90,13 @@ sudo deno_wiki false
 
 ## 下载资源
 
-```
+```bash
 deno install --allow-write --allow-read --allow-net --unstable -n deno_down -f https://deno.land/x/jw_cli@v0.8.0/cli/download.ts
 ```
 
 之后执行：
 
-```
+```bash
 deno_down
 ```
 
@@ -104,7 +104,7 @@ deno_down
 
 也可以编译为可执行文件：
 
-```
+```bash
 deno compile --unstable --allow-write --allow-read --allow-net --target x86_64-pc-windows-msvc https://deno.land/x/jw_cli@v0.8.0/cli/download.ts
 deno compile --unstable --allow-write --allow-read --allow-net https://deno.land/x/jw_cli@v0.8.0/cli/download.ts
 ```
@@ -143,7 +143,7 @@ deno compile --unstable --allow-write --allow-read --allow-net --allow-run https
 
 安装
 
-```
+```bash
 deno install  --allow-read --allow-env -n deno_valid -f  https://deno.land/x/jw_cli@v0.8.0/cli/valid_deps.ts
 ```
 
@@ -167,4 +167,51 @@ deno run --allow-write https://deno.land/x/jw_cli@v0.8.0/cli/git/git_hook.ts
 
 ```bash
 deno install  --allow-run  -n push -f  https://deno.land/x/jw_cli@v0.8.0/cli/git/push.ts
+```
+
+## 切换当前工程的Git用户
+
+主要为解决工作中使用工作账户和GitHub上使用个人账户的问题。
+
+```bash
+deno install --allow-run --allow-net --unstable -n gum  -f https://deno.land/x/jw_cli@v0.8.0/cli/git/user_change.ts
+```
+
+展示列表：
+
+```bash
+$ gum 
+# 等同于
+$ gum list
+
+┌───────┬──────────┬─────────────────┬─────────┐
+│ Alias │ UserName │ Email           │ Current │
+├───────┼──────────┼─────────────────┼─────────┤
+│ xx    │ xxxxx    │ xxxxx@126.com   │ ✓       │
+├───────┼──────────┼─────────────────┼─────────┤
+│ xxxx  │ xxxx     │ xxxxxx@xxxx.com │         │
+└───────┴──────────┴─────────────────┴─────────┘
+```
+
+增加：
+
+```bash
+$ gum add 
+
+? Set a username › test
+? Set a email › test
+? Set an alias (test) › test
+Git user added
+```
+
+使用：
+
+```bash
+$ gum use test
+```
+
+删除：
+
+```bash
+$ gum del test
 ```
