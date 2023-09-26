@@ -159,7 +159,7 @@ if (import.meta.main) {
 
   await new Command()
     .name("gum")
-    .version(pkg.version)
+    .version("v" + pkg.version)
     .description("Change the git user in current project")
     .meta("deno", Deno.version.deno)
     .meta("v8", Deno.version.v8)
