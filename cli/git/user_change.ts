@@ -1,4 +1,4 @@
-// deno install --allow-run --allow-net --allow-read --unstable -n gum  -f ./cli/git/user_change.ts
+// deno install --allow-run --allow-net --allow-read --allow-write --allow-env --unstable -n gum  -f ./cli/git/user_change.ts
 import { runTask, runTasks } from "../../lib/task.ts";
 import { Input } from "https://deno.land/x/cliffy@v1.0.0-rc.3/prompt/mod.ts";
 import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
@@ -12,6 +12,13 @@ import {
   DenoLandProvider,
   UpgradeCommand,
 } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/upgrade/mod.ts";
+import os from "node:os";
+import { join } from "https://deno.land/std@0.202.0/path/mod.ts";
+import { ensureFile } from "https://deno.land/std@0.202.0/fs/ensure_file.ts";
+
+const PREFIX = "git_user";
+const kvPath = join(os.homedir(), ".deno", "kv", PREFIX);
+await ensureFile(kvPath); // 如果不存在则创建
 
 const info = colors.bold.blue;
 const error = colors.bold.red;
@@ -21,8 +28,7 @@ interface GitUser {
   email: string;
   alias: string; // 用作key值
 }
-const kv = await Deno.openKv();
-const PREFIX = "git_user";
+const kv = await Deno.openKv(kvPath); // 指定路径后，版本升级数据也不会丢失
 
 async function getUserList(): Promise<GitUser[]> {
   const entries = kv.list<GitUser>({ prefix: [PREFIX] });
@@ -50,16 +56,9 @@ async function removeUser(alias: string) {
 }
 
 async function getCurrentUser(): Promise<GitUser | undefined> {
-  const { code, stdout } = await runTask("git config user.name", false);
-  if (code) {
-    Deno.exit(code);
-  }
-  if (!stdout) {
-    return undefined;
-  }
-  const username = new TextDecoder().decode(stdout).trim();
+  const username = await runTask("git config user.name");
   const allUsers = await getUserList();
-  return allUsers.find((user) => user.username === username);
+  return allUsers.find((user) => user.username === username.trim());
 }
 
 async function showGitList() {

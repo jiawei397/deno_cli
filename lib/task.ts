@@ -1,30 +1,25 @@
-export const runTask = async (str: string, isShowLog = true) => {
+export async function runTask(str: string): Promise<string> {
   const [cmd, ...args] = str.split(" ");
   const command = new Deno.Command(cmd, {
     args,
   });
   const { code, stdout, stderr } = await command.output();
-  if (code === 0) {
-    if (isShowLog) {
-      await Deno.stdout.write(stdout);
-    }
-  } else {
-    console.error(stderr);
+  const te = new TextDecoder();
+  if (code !== 0) {
+    throw new Error(te.decode(stderr));
   }
-  return { code, stdout, stderr };
-};
+  return te.decode(stdout);
+}
 
 export const runTasks = async function (arr: string[], isShowLog = true) {
   for (const str of arr) {
     if (isShowLog) {
       console.log(`运行任务：${str}`);
     }
-    const { code } = await runTask(str);
+    const msg = await runTask(str);
     if (isShowLog) {
+      console.log(msg);
       console.log(`任务结束：${str}`);
-    }
-    if (code) {
-      Deno.exit(code);
     }
   }
 };
