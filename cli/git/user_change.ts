@@ -1,20 +1,17 @@
-// deno install --allow-run --allow-net --allow-read --allow-write --allow-env --unstable -n gum  -f ./cli/git/user_change.ts
-import { runTask, runTasks } from "../../lib/task.ts";
-import { Input } from "https://deno.land/x/cliffy@v1.0.0-rc.3/prompt/mod.ts";
-import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
-import {
-  Row,
-  Table,
-} from "https://deno.land/x/cliffy@v1.0.0-rc.3/table/mod.ts";
-import { colors } from "https://deno.land/x/cliffy@v1.0.0-rc.3/ansi/colors.ts";
-import pkg from "../../deno.json" with { type: "json" };
+// deno install --allow-run --allow-net --allow-read --allow-write --allow-env --unstable --import-map import_map.json -n gum  -f ./cli/git/user_change.ts
+import { runTask, runTasks } from "@/lib/task.ts";
+import { Input } from "cliffy/prompt/mod.ts";
+import { Command } from "cliffy/command/mod.ts";
+import { Row, Table } from "cliffy/table/mod.ts";
+import { colors } from "cliffy/ansi/colors.ts";
+import pkg from "@/deno.json" with { type: "json" };
 import {
   DenoLandProvider,
   UpgradeCommand,
-} from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/upgrade/mod.ts";
+} from "cliffy/command/upgrade/mod.ts";
 import os from "node:os";
-import { join } from "https://deno.land/std@0.202.0/path/mod.ts";
-import { ensureFile } from "https://deno.land/std@0.202.0/fs/ensure_file.ts";
+import { join } from "std/path/mod.ts";
+import { ensureFile } from "std/fs/ensure_file.ts";
 
 const PREFIX = "git_user";
 const kvPath = join(os.homedir(), ".deno", "kv", PREFIX);

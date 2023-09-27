@@ -180,7 +180,7 @@ deno install  --allow-run  -n push -f  https://deno.land/x/jw_cli@v0.9.3/cli/git
 主要为解决工作中使用工作账户和GitHub上使用个人账户的问题。
 
 ```bash
-deno install --allow-run --allow-net --allow-read --allow-write --allow-env --unstable -n gum  -f https://deno.land/x/jw_cli@v0.9.3/cli/git/user_change.ts
+deno install --allow-run --allow-net --allow-read --allow-write --allow-env --unstable --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json -n gum  -f https://deno.land/x/jw_cli@v0.9.3/cli/git/user_change.ts
 ```
 
 展示列表：
