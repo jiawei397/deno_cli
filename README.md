@@ -155,7 +155,13 @@ deno install  --allow-read --allow-env -n deno_valid -f  https://deno.land/x/jw_
 deno install  --allow-write  -n deno_hook -f  https://deno.land/x/jw_cli@v0.9.3/cli/git/git_hook.ts
 ```
 
-也可以直接运行
+之后运行：
+
+```bash
+deno_hook
+```
+
+也可以直接运行：
 
 ```bash
 deno run --allow-write https://deno.land/x/jw_cli@v0.9.3/cli/git/git_hook.ts
