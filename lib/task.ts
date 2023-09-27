@@ -18,7 +18,9 @@ export const runTasks = async function (arr: string[], isShowLog = true) {
     }
     const msg = await runTask(str);
     if (isShowLog) {
-      console.log(msg);
+      if (msg) {
+        console.log(msg);
+      }
       console.log(`任务结束：${str}`);
     }
   }
