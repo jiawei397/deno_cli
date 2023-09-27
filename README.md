@@ -10,7 +10,7 @@
 安装：
 
 ```bash
-deno install --allow-read --allow-write --allow-run --unstable --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json -n tag -f https://deno.land/x/jw_cli@v0.9.3/cli/tag/mod.ts
+deno install --allow-read --allow-write --allow-run --unstable --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json -n tag -f https://deno.land/x/jw_cli@v1.0.0/cli/tag/mod.ts
 ```
 
 ### Node.js项目
@@ -41,7 +41,7 @@ tag major
 
 会更新根目录下以下文件的版本号：`deno.jsonc`或`deno.json`文件，以及`README.md`，如果后者有使用前三者之一中配置的`name`，将会对应替换。
 
-比如本工程的名称为`jw_cli`，那么本文件中`jw_cli@v0.9.3`都会对应替换为新的版本。
+比如本工程的名称为`jw_cli`，那么本文件中`jw_cli@v1.0.0`都会对应替换为新的版本。
 
 #### 版本号不以v开头
 
@@ -70,7 +70,7 @@ tag -D
 ## 下载资源
 
 ```bash
-deno install --allow-write --allow-read --allow-net --unstable --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json -n deno_down -f https://deno.land/x/jw_cli@v0.9.3/cli/download.ts
+deno install --allow-write --allow-read --allow-net --unstable --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json -n deno_down -f https://deno.land/x/jw_cli@v1.0.0/cli/download.ts
 ```
 
 之后执行：
@@ -84,8 +84,8 @@ deno_down
 也可以编译为可执行文件：
 
 ```bash
-deno compile --unstable --allow-write --allow-read --allow-net --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json --target x86_64-pc-windows-msvc https://deno.land/x/jw_cli@v0.9.3/cli/download.ts
-deno compile --unstable --allow-write --allow-read --allow-net --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json https://deno.land/x/jw_cli@v0.9.3/cli/download.ts
+deno compile --unstable --allow-write --allow-read --allow-net --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json --target x86_64-pc-windows-msvc https://deno.land/x/jw_cli@v1.0.0/cli/download.ts
+deno compile --unstable --allow-write --allow-read --allow-net --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json https://deno.land/x/jw_cli@v1.0.0/cli/download.ts
 ```
 
 ## 下载deno模板工程
@@ -93,7 +93,7 @@ deno compile --unstable --allow-write --allow-read --allow-net --import-map http
 模板工程是依赖于`oak`与`oak_nest`，包含日志、全局异常捕获以及我们的业务`sso`校验，数据库使用`mongodb`，`CICD`配置了`.gitlab-ci.yaml`文件，可自动发布部署到我们的`gitlab`。
 
 ```bash
-deno install --allow-write --allow-read --allow-net --allow-run --unstable --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json -n deno_cli -f https://deno.land/x/jw_cli@v0.9.3/cli/project.ts
+deno install --allow-write --allow-read --allow-net --allow-run --unstable --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json -n deno_cli -f https://deno.land/x/jw_cli@v1.0.0/cli/project.ts
 ```
 
 之后执行：
@@ -108,7 +108,7 @@ deno_cli
 或者跳过全局安装，直接执行：
 
 ```bash
-deno run --allow-write --allow-read --allow-net --allow-run --unstable --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json  https://deno.land/x/jw_cli@v0.9.3/cli/project.ts 你的工程名称
+deno run --allow-write --allow-read --allow-net --allow-run --unstable --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json  https://deno.land/x/jw_cli@v1.0.0/cli/project.ts 你的工程名称
 ```
 
 ## 增加Git Commit hook
@@ -116,7 +116,7 @@ deno run --allow-write --allow-read --allow-net --allow-run --unstable --import-
 安装
 
 ```bash
-deno install  --allow-write --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json  -n deno_hook -f  https://deno.land/x/jw_cli@v0.9.3/cli/git/git_hook.ts
+deno install  --allow-write --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json  -n deno_hook -f  https://deno.land/x/jw_cli@v1.0.0/cli/git/git_hook.ts
 ```
 
 之后运行：
@@ -128,7 +128,7 @@ deno_hook
 也可以直接运行：
 
 ```bash
-deno run --allow-write --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json https://deno.land/x/jw_cli@v0.9.3/cli/git/git_hook.ts
+deno run --allow-write --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json https://deno.land/x/jw_cli@v1.0.0/cli/git/git_hook.ts
 ```
 
 ## 增加git push
@@ -136,7 +136,7 @@ deno run --allow-write --import-map https://deno.land/x/jw_cli@v0.9.3/import_map
 安装
 
 ```bash
-deno install  --allow-run --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json  -n push -f  https://deno.land/x/jw_cli@v0.9.3/cli/git/push.ts
+deno install  --allow-run --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json  -n push -f  https://deno.land/x/jw_cli@v1.0.0/cli/git/push.ts
 ```
 
 ## 切换当前工程的Git用户
@@ -144,7 +144,7 @@ deno install  --allow-run --import-map https://deno.land/x/jw_cli@v0.9.3/import_
 主要为解决工作中使用工作账户和GitHub上使用个人账户的问题。
 
 ```bash
-deno install --allow-run --allow-net --allow-read --allow-write --allow-env --unstable --import-map https://deno.land/x/jw_cli@v0.9.3/import_map.json -n gum  -f https://deno.land/x/jw_cli@v0.9.3/cli/git/user_change.ts
+deno install --allow-run --allow-net --allow-read --allow-write --allow-env --unstable --import-map https://deno.land/x/jw_cli@v1.0.0/import_map.json -n gum  -f https://deno.land/x/jw_cli@v1.0.0/cli/git/user_change.ts
 ```
 
 展示列表：

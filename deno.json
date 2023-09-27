@@ -1,6 +1,6 @@
 {
   "name": "jw_cli",
-  "version": "0.9.3",
+  "version": "1.0.0",
   "tasks": {
     "project": "deno test --allow-env"
   },
