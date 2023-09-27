@@ -1,4 +1,4 @@
-// deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f ./mod.ts
+// deno install --allow-read --allow-write --allow-run --unstable -n tag -f ./cli/tag/mod.ts
 import { runTasks } from "../../lib/task.ts";
 import { isFileExist } from "../../lib/utils.ts";
 import { cargoPath } from "../globals.ts";
