@@ -1,15 +1,11 @@
 // deno compile --unstable --allow-write --allow-read --allow-net --target x86_64-pc-windows-msvc cli/project.ts
 // deno compile --unstable --allow-write --allow-read --allow-net cli/project.ts
-import {
-  applyEdits,
-  Ask,
-  decompress,
-  join,
-  modify,
-  parseJson,
-} from "../deps.ts";
+import Ask from "ask";
+import { applyEdits, modify, parse as parseJson } from "jsonc";
 import { download } from "../lib/utils.ts";
 import { readmePath } from "./globals.ts";
+import { decompress } from "zip";
+import { join } from "std/path/mod.ts";
 
 const ask = new Ask({
   prefix: ">",

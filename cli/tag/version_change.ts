@@ -1,22 +1,13 @@
 // deno_tag patch -M 'feat: xxx'
 // 这个文件专门处理deno的变更
-import { runTasks } from "../../lib/task.ts";
-import { isFileExist } from "../../lib/utils.ts";
-import {
-  applyEdits,
-  expandGlob,
-  modify,
-  parseJson,
-  relative,
-  resolve,
-  parseToml,
-} from "../../deps.ts";
-import {
-  cargoLockPath,
-  cargoPath,
-  readmePath,
-} from "../globals.ts";
+import { runTasks } from "@/lib/task.ts";
+import { isFileExist } from "@/lib/utils.ts";
+import { parse as parseToml } from "std/toml/mod.ts";
+import { applyEdits, modify, parse as parseJson } from "jsonc";
+import { cargoLockPath, cargoPath, readmePath } from "../globals.ts";
 import { Package, RustToml, VersionAction } from "./types.ts";
+import { relative, resolve } from "std/path/mod.ts";
+import { expandGlob } from "std/fs/mod.ts";
 
 async function getPkgFromDenoJson(denoJsonPath: string): Promise<Package> {
   const text = await Deno.readTextFile(denoJsonPath);

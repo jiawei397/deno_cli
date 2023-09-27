@@ -2,6 +2,7 @@
   "name": "jw_cli",
   "version": "0.9.3",
   "tasks": {
-    "test": "deno test --allow-env"
-  }
+    "project": "deno test --allow-env"
+  },
+  "importMap": "import_map.json"
 }

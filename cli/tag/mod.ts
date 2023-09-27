@@ -1,9 +1,9 @@
-// deno install --allow-read --allow-write --allow-run --unstable -n tag -f ./cli/tag/mod.ts
-import { runTasks } from "../../lib/task.ts";
-import { isFileExist } from "../../lib/utils.ts";
+// deno install --allow-read --allow-write --allow-run --unstable --import-map import_map.json -n tag -f ./cli/tag/mod.ts
+import { runTasks } from "@/lib/task.ts";
+import { isFileExist } from "@/lib/utils.ts";
 import { cargoPath } from "../globals.ts";
 import { changeDenoVersion, changeRustVersion } from "./version_change.ts";
-import { parse } from "../../deps.ts";
+import { parse } from "std/flags/mod.ts";
 import { TagParams, VersionAction } from "./types.ts";
 
 async function getNodeVersion() {
