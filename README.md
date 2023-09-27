@@ -10,34 +10,34 @@
 
 安装：
 
-```
-deno install --allow-read --allow-write --allow-run --unstable -n deno_tag -f https://deno.land/x/jw_cli@v0.9.2/cli/tag/mod.ts
+```bash
+deno install --allow-read --allow-write --allow-run --unstable -n tag -f https://deno.land/x/jw_cli@v0.9.2/cli/tag/mod.ts
 ```
 
 ### nodejs项目
 
 在项目根目录下，执行
 
-```
-deno_tag
+```bash
+tag
 ```
 
 ### deno项目
 
 在项目根目录下执行：
 
-```
-deno_tag -V 0.0.1
-deno_tag --version 0.0.1
+```bash
+tag -V 0.0.1
+tag --version 0.0.1
 ```
 
 或者
 
-```
-deno_tag
-deno_tag patch # 与上面等价
-deno_tag minor
-deno_tag major
+```bash
+tag
+tag patch # 与上面等价
+tag minor
+tag major
 ```
 
 会更新根目录下以下文件的版本号：`deno.jsonc`或`deno.json`文件，以及`README.md`，如果后者有使用前三者之一中配置的`name`，将会对应替换。
@@ -48,24 +48,24 @@ deno_tag major
 
 假设你推送的tag版本号不想以v开头，那么可以添加一个参数-L或者--local：
 
-```
-deno_tag patch -L
+```bash
+tag patch -L
 ```
 
 #### 添加自定义信息
 
 打标签时默认提交信息是版本号，如果想自定义信息，可以使用-M或者--msg：
 
-```
-deno_tag minor -M "feat: change some"
+```bash
+tag minor -M "feat: change some"
 ```
 
 #### 更新所有目录的README.md文件
 
 如果想要更新所有目录的README.md文件，可以使用-D或者--deep：
 
-```
-deno_tag -D
+```bash
+tag -D
 ```
 
 ## 写入本地hosts文件
@@ -74,13 +74,13 @@ deno_tag -D
 
 安装：
 
-```
+```bash
 deno install --allow-write --allow-read -n deno_wiki -f https://deno.land/x/jw_cli@v0.9.2/cli/hosts.ts
 ```
 
 使用：
 
-```
+```bash
 # 本地测试
 sudo deno_wiki true
 
@@ -174,7 +174,7 @@ deno install  --allow-run  -n push -f  https://deno.land/x/jw_cli@v0.9.2/cli/git
 主要为解决工作中使用工作账户和GitHub上使用个人账户的问题。
 
 ```bash
-deno install --allow-run --allow-net --unstable -n gum  -f https://deno.land/x/jw_cli@v0.9.2/cli/git/user_change.ts
+deno install --allow-run --allow-net --allow-read --allow-write --allow-env --unstable -n gum  -f https://deno.land/x/jw_cli@v0.9.2/cli/git/user_change.ts
 ```
 
 展示列表：

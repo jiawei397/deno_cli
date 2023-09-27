@@ -152,7 +152,14 @@ if (import.meta.main) {
 
   const upgrade = new UpgradeCommand({
     main: "cli/git/user_change.ts",
-    args: ["--allow-net", "--allow-run", "--unstable"],
+    args: [
+      "--allow-net",
+      "--allow-run",
+      "--allow-env",
+      "--allow-write",
+      "--allow-read",
+      "--unstable",
+    ],
     provider: new DenoLandProvider({ name: "jw_cli" }),
   });
 
