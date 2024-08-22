@@ -185,3 +185,16 @@ $ gum use test
 ```bash
 $ gum del test
 ```
+
+## 清理MacOS下被占用的端口
+
+安装：
+```bash
+deno install --allow-run -n dk -f https://deno.land/x/jw_cli@v1.1.0/cli/kill.ts
+```
+
+使用：
+
+```bash
+dk 8080
+```
