@@ -4,13 +4,14 @@
 - [x] 下载资源
 - [x] 脚手架，安装基于oak_nest、mongo的简单web工程
 - [x] 切换当前工程的Git用户
+- [x] 简易文件服务器 
 
 ## 给Deno或Node.js或Rust项目打标签，并推送到远程
 
 安装：
 
 ```bash
-deno install --allow-read --allow-write --allow-run --unstable --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json -n tag -f https://deno.land/x/jw_cli@v1.1.0/cli/tag/mod.ts
+deno install -g --allow-read --allow-write --allow-run --unstable --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json -n tag -f https://deno.land/x/jw_cli@v1.1.0/cli/tag/mod.ts
 ```
 
 ### Node.js项目
@@ -70,7 +71,7 @@ tag -D
 ## 下载资源
 
 ```bash
-deno install --allow-write --allow-read --allow-net --unstable --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json -n deno_down -f https://deno.land/x/jw_cli@v1.1.0/cli/download.ts
+deno install -g --allow-write --allow-read --allow-net --unstable --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json -n deno_down -f https://deno.land/x/jw_cli@v1.1.0/cli/download.ts
 ```
 
 之后执行：
@@ -93,7 +94,7 @@ deno compile --unstable --allow-write --allow-read --allow-net --import-map http
 模板工程是依赖于`oak`与`oak_nest`，包含日志、全局异常捕获以及我们的业务`sso`校验，数据库使用`mongodb`，`CICD`配置了`.gitlab-ci.yaml`文件，可自动发布部署到我们的`gitlab`。
 
 ```bash
-deno install --allow-write --allow-read --allow-net --allow-run --unstable --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json -n deno_cli -f https://deno.land/x/jw_cli@v1.1.0/cli/project.ts
+deno install -g --allow-write --allow-read --allow-net --allow-run --unstable --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json -n deno_cli -f https://deno.land/x/jw_cli@v1.1.0/cli/project.ts
 ```
 
 之后执行：
@@ -116,7 +117,7 @@ deno run --allow-write --allow-read --allow-net --allow-run --unstable --import-
 安装
 
 ```bash
-deno install  --allow-write --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json  -n deno_hook -f  https://deno.land/x/jw_cli@v1.1.0/cli/git/git_hook.ts
+deno install  -g --allow-write --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json  -n deno_hook -f  https://deno.land/x/jw_cli@v1.1.0/cli/git/git_hook.ts
 ```
 
 之后运行：
@@ -136,7 +137,7 @@ deno run --allow-write --import-map https://deno.land/x/jw_cli@v1.1.0/import_map
 安装
 
 ```bash
-deno install  --allow-run --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json  -n push -f  https://deno.land/x/jw_cli@v1.1.0/cli/git/push.ts
+deno install  -g --allow-run --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json  -n push -f  https://deno.land/x/jw_cli@v1.1.0/cli/git/push.ts
 ```
 
 ## 切换当前工程的Git用户
@@ -144,7 +145,7 @@ deno install  --allow-run --import-map https://deno.land/x/jw_cli@v1.1.0/import_
 主要为解决工作中使用工作账户和GitHub上使用个人账户的问题。
 
 ```bash
-deno install --allow-run --allow-net --allow-read --allow-write --allow-env --unstable --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json -n gum  -f https://deno.land/x/jw_cli@v1.1.0/cli/git/user_change.ts
+deno install -g --allow-run --allow-net --allow-read --allow-write --allow-env --unstable --import-map https://deno.land/x/jw_cli@v1.1.0/import_map.json -n gum  -f https://deno.land/x/jw_cli@v1.1.0/cli/git/user_change.ts
 ```
 
 展示列表：
@@ -189,8 +190,9 @@ $ gum del test
 ## 清理MacOS下被占用的端口
 
 安装：
+
 ```bash
-deno install --allow-run -n dk -f https://deno.land/x/jw_cli@v1.1.0/cli/kill.ts
+deno install -g --allow-run -n dk -f https://deno.land/x/jw_cli@v1.1.0/cli/kill.ts
 ```
 
 使用：
@@ -198,3 +200,26 @@ deno install --allow-run -n dk -f https://deno.land/x/jw_cli@v1.1.0/cli/kill.ts
 ```bash
 dk 8080
 ```
+
+## 启动简易文件服务器
+
+快速在当前目录启动一个文件服务器，方便本地文件预览和共享。
+
+安装：
+
+```bash
+deno install -g --allow-net --allow-read -n serve -f https://deno.land/x/jw_cli@v1.1.0/cli/file_server.ts
+```
+
+使用：
+
+```bash
+# 默认在8000端口启动服务
+serve .
+
+# 指定端口启动服务
+serve .  --port 9000
+```
+
+服务启动后，可以通过浏览器访问 `http://localhost:端口号` 来浏览和下载文件。 
+

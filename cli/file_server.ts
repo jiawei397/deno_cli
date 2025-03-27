@@ -1,5 +1,5 @@
 import { Hono } from "jsr:@hono/hono@^4";
-import { join, extname } from "jsr:@std/path@^0.218.0";
+import { extname, join } from "jsr:@std/path@^0.218.0";
 import { parseArgs } from "jsr:@std/cli@1/parse-args";
 
 const app = new Hono();
@@ -8,16 +8,16 @@ const app = new Hono();
 const flags = parseArgs(Deno.args, {
   string: ["origin", "port"],
   boolean: ["help", "debug"],
-  default: { 
+  default: {
     origin: "*",
     port: "8000",
-    debug: false
+    debug: false,
   },
   alias: {
     h: "help",
     p: "port",
     o: "origin",
-    d: "debug"
+    d: "debug",
   },
 });
 
@@ -88,10 +88,13 @@ app.use("/*", async (c, next) => {
 });
 
 // 生成文件列表HTML
-function generateDirectoryListing(path: string, files: Deno.DirEntry[]): string {
+function generateDirectoryListing(
+  path: string,
+  files: Deno.DirEntry[],
+): string {
   const relativePath = path === "/" ? "" : path;
-  
-  const items = files.map(file => {
+
+  const items = files.map((file) => {
     const itemPath = join(relativePath, file.name);
     const itemName = file.isDirectory ? `${file.name}/` : file.name;
     return `<li><a href="${itemPath}">${itemName}</a></li>`;
@@ -115,8 +118,10 @@ function generateDirectoryListing(path: string, files: Deno.DirEntry[]): string 
       <body>
         <h1>Directory: ${path}</h1>
         <ul>
-          ${path !== "/" ? `<li><a href="${join(relativePath, '..')}">..</a></li>` : ''}
-          ${items.join('\n')}
+          ${
+    path !== "/" ? `<li><a href="${join(relativePath, "..")}">..</a></li>` : ""
+  }
+          ${items.join("\n")}
         </ul>
       </body>
     </html>
@@ -129,10 +134,10 @@ app.use("/*", async (c) => {
     const path = c.req.path;
     const filePath = join(rootPath, decodeURIComponent(path));
     console.log(`Actual file path: ${filePath}`);
-    
+
     // 检查路径是否是目录
     const stat = await Deno.stat(filePath);
-    
+
     if (stat.isDirectory) {
       // 如果是目录但URL不以斜杠结尾，进行重定向
       if (!path.endsWith("/")) {
@@ -159,14 +164,14 @@ app.use("/*", async (c) => {
         for await (const entry of Deno.readDir(filePath)) {
           dirEntries.push(entry);
         }
-        
+
         // 按照文件夹在前，文件在后的顺序排序
         dirEntries.sort((a, b) => {
           if (a.isDirectory && !b.isDirectory) return -1;
           if (!a.isDirectory && b.isDirectory) return 1;
           return a.name.localeCompare(b.name);
         });
-        
+
         const html = generateDirectoryListing(path, dirEntries);
         return new Response(html, {
           headers: {
@@ -181,7 +186,7 @@ app.use("/*", async (c) => {
         console.log(`File size: ${file.length} bytes`);
         console.log(`Content-Type: ${getMimeType(filePath)}`);
       }
-      
+
       return new Response(file, {
         headers: {
           "Content-Type": getMimeType(filePath),
@@ -192,7 +197,7 @@ app.use("/*", async (c) => {
     if (debug) {
       console.error("Error handling request:", error);
     }
-    
+
     if (error instanceof Deno.errors.NotFound) {
       return c.notFound();
     }
