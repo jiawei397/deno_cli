@@ -1,6 +1,7 @@
 import { Hono } from "jsr:@hono/hono@^4";
 import { extname, join } from "jsr:@std/path@^0.218.0";
 import { parseArgs } from "jsr:@std/cli@1/parse-args";
+import { contentType } from "jsr:@std/media-types@^1";
 
 const app = new Hono();
 
@@ -54,27 +55,15 @@ const rootPath = Deno.realPathSync(folderPath as string);
 // 根据文件扩展名获取 MIME 类型
 function getMimeType(path: string): string {
   const ext = extname(path).toLowerCase();
-  const mimeTypes: Record<string, string> = {
-    ".html": "text/html; charset=utf-8",
-    ".css": "text/css; charset=utf-8",
-    ".js": "text/javascript; charset=utf-8",
-    ".ts": "text/javascript; charset=utf-8", // TypeScript 文件显示为 JavaScript
-    ".json": "application/json; charset=utf-8",
-    ".png": "image/png",
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".gif": "image/gif",
-    ".svg": "image/svg+xml",
-    ".pdf": "application/pdf",
-    ".txt": "text/plain; charset=utf-8",
-    ".xml": "application/xml",
-    ".mp4": "video/mp4",
-    ".mp3": "audio/mpeg",
-    ".webm": "video/webm",
-    ".wasm": "application/wasm",
-  };
-
-  return mimeTypes[ext] || "application/octet-stream";
+  
+  // 针对TypeScript文件的特殊处理
+  if (ext === ".ts") {
+    return "text/javascript; charset=UTF-8";
+  }
+  
+  // 使用标准库获取MIME类型
+  const type = contentType(ext);
+  return type || "application/octet-stream";
 }
 
 // 添加CORS中间件
