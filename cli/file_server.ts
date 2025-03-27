@@ -58,6 +58,7 @@ function getMimeType(path: string): string {
     ".html": "text/html; charset=utf-8",
     ".css": "text/css; charset=utf-8",
     ".js": "text/javascript; charset=utf-8",
+    ".ts": "text/javascript; charset=utf-8", // TypeScript 文件显示为 JavaScript
     ".json": "application/json; charset=utf-8",
     ".png": "image/png",
     ".jpg": "image/jpeg",
