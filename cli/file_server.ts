@@ -102,7 +102,28 @@ function generateDirectoryListing(
   const items = files.map((file) => {
     const itemPath = join(relativePath, file.name);
     const itemName = file.isDirectory ? `${file.name}/` : file.name;
-    return `<li><a href="${itemPath}">${itemName}</a></li>`;
+    
+    // 添加文件大小和修改时间
+    let fileInfo = "";
+    if (!file.isDirectory) {
+      try {
+        const stat = Deno.statSync(join(rootPath, itemPath));
+        const size = stat.size > 1024 * 1024
+          ? (stat.size / (1024 * 1024)).toFixed(2) + " MB"
+          : stat.size > 1024
+          ? (stat.size / 1024).toFixed(2) + " KB"
+          : stat.size + " B";
+          
+        const modified = stat.mtime ? 
+          new Date(stat.mtime).toLocaleString() : "Unknown";
+        
+        fileInfo = `<span class="size">${size}</span> <span class="date">${modified}</span>`;
+      } catch {
+        fileInfo = "";
+      }
+    }
+    
+    return `<li><a href="${itemPath}">${itemName}</a>${fileInfo}</li>`;
   });
 
   return `
@@ -118,6 +139,8 @@ function generateDirectoryListing(
           li { margin: 8px 0; }
           a { display: block; padding: 8px; text-decoration: none; color: #0366d6; }
           a:hover { background-color: #f6f8fa; }
+          .size { font-size: 0.9em; color: #666; }
+          .date { font-size: 0.9em; color: #999; }
         </style>
       </head>
       <body>
