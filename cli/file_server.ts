@@ -8,17 +8,19 @@ const app = new Hono();
 // 解析命令行参数
 const flags = parseArgs(Deno.args, {
   string: ["origin", "port"],
-  boolean: ["help", "debug"],
+  boolean: ["help", "debug", "binary"],
   default: {
     origin: "*",
     port: "8000",
     debug: false,
+    binary: false,
   },
   alias: {
     h: "help",
     p: "port",
     o: "origin",
     d: "debug",
+    b: "binary",
   },
 });
 
@@ -32,9 +34,11 @@ Options:
   --port=<port>, -p  Specify listening port (default: 8000)
   --origin=<origin>, -o  Set CORS allowed origin (default: *)
   --debug, -d        Enable debug mode, display detailed request information
+  --binary, -b       Set unknown file types to download as binary instead of displaying as text (default: false)
 
 Examples:
   deno run -A main.ts ./public --port=8080 --origin=http://localhost:3000 --debug
+  deno run -A main.ts ./public --binary
 `);
   Deno.exit(0);
 }
@@ -43,6 +47,7 @@ const folderPath = flags._[0];
 const port = flags.port;
 const origin = flags.origin;
 const debug = flags.debug;
+const binaryMode = flags.binary;
 
 if (!folderPath) {
   console.error("Error: Please specify a folder path to serve");
@@ -63,7 +68,17 @@ function getMimeType(path: string): string {
   
   // 使用标准库获取MIME类型
   const type = contentType(ext);
-  return type || "application/octet-stream";
+  
+  // 根据二进制模式决定默认MIME类型
+  if (!type) {
+    if (binaryMode) {
+      return "application/octet-stream"; // 强制下载
+    } else {
+      return "text/plain; charset=UTF-8"; // 作为文本显示
+    }
+  }
+  
+  return type;
 }
 
 // 添加CORS中间件
@@ -200,6 +215,7 @@ console.log(`Starting file server...
 Folder path: ${folderPath}
 Access URL: http://localhost:${port}
 CORS allowed origin: ${origin}
-Debug mode: ${debug ? "enabled" : "disabled"}`);
+Debug mode: ${debug ? "enabled" : "disabled"}
+Binary mode: ${binaryMode ? "enabled" : "disabled"}`);
 
 Deno.serve({ port: Number(port) }, app.fetch);
