@@ -2,6 +2,14 @@ import { Hono } from "jsr:@hono/hono@^4";
 import { extname, join } from "jsr:@std/path@^0.218.0";
 import { parseArgs } from "jsr:@std/cli@1/parse-args";
 import { contentType } from "jsr:@std/media-types@^1";
+import { extract, install } from "https://esm.sh/@twind/core@1.1.3";
+import presetTailwind from "https://esm.sh/@twind/preset-tailwind@1.1.4";
+
+// 安装 Twind
+install({
+  presets: [presetTailwind()],
+  darkMode: 'media', // 启用基于媒体查询的深色模式
+});
 
 const app = new Hono();
 
@@ -117,146 +125,74 @@ function generateDirectoryListing(
         const modified = stat.mtime ? 
           new Date(stat.mtime).toLocaleString() : "Unknown";
         
-        fileInfo = `<span class="size">${size}</span><span class="date">${modified}</span>`;
+        fileInfo = `
+          <span class="hidden sm:block w-20 text-right text-gray-500 dark:text-gray-400 text-sm mr-4">${size}</span>
+          <span class="hidden md:block w-44 text-right text-gray-400 dark:text-gray-500 text-sm">${modified}</span>
+        `;
       } catch {
         fileInfo = "";
       }
     }
     
-    return `<li class="${file.isDirectory ? 'directory' : 'file'}">
-      <a href="${itemPath}">
-        <span class="name">${itemName}</span>
+    // 为文件类型选择图标
+    const fileIcon = file.isDirectory ? 
+      '<svg class="w-5 h-5 text-yellow-500 dark:text-yellow-400 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>' : 
+      '<svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>';
+    
+    return `<li class="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+      <a href="${itemPath}" class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-150">
+        ${fileIcon}
+        <span class="flex-1 truncate font-medium ${file.isDirectory ? 'text-blue-600 dark:text-blue-400 font-semibold' : ''}">${itemName}</span>
         ${fileInfo}
       </a>
     </li>`;
   });
-
-  return `
+  
+  // 构建 HTML 模板
+  const body = `
     <!DOCTYPE html>
-    <html>
+    <html lang="zh-CN">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Directory Listing - ${path}</title>
-        <style>
-          :root {
-            --bg-color: #ffffff;
-            --text-color: #333333;
-            --accent-color: #0366d6;
-            --hover-bg: #f6f8fa;
-            --border-color: #eee;
-          }
-          
-          @media (prefers-color-scheme: dark) {
-            :root {
-              --bg-color: #0d1117;
-              --text-color: #c9d1d9;
-              --accent-color: #58a6ff;
-              --hover-bg: #161b22;
-              --border-color: #30363d;
-            }
-          }
-          
-          body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-          }
-          
-          h1 {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-          }
-          
-          ul {
-            list-style-type: none;
-            padding: 0;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            overflow: hidden;
-          }
-          
-          li {
-            border-bottom: 1px solid var(--border-color);
-          }
-          
-          li:last-child {
-            border-bottom: none;
-          }
-          
-          li a {
-            display: flex;
-            text-decoration: none;
-            color: var(--accent-color);
-            padding: 12px 15px;
-            align-items: center;
-          }
-          
-          li a:hover {
-            background-color: var(--hover-bg);
-          }
-          
-          .name {
-            flex: 1;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-          
-          .directory .name {
-            font-weight: 600;
-          }
-          
-          .size {
-            width: 80px;
-            text-align: right;
-            color: #666;
-            font-size: 0.9em;
-            margin-right: 20px;
-          }
-          
-          .date {
-            width: 180px;
-            text-align: right;
-            color: #999;
-            font-size: 0.9em;
-          }
-          
-          @media (max-width: 768px) {
-            .date {
-              display: none;
-            }
-          }
-          
-          @media (max-width: 480px) {
-            h1 {
-              font-size: 1.5em;
-            }
-            .size, .date {
-              display: none;
-            }
-          }
-        </style>
+        <title>目录列表 - ${path}</title>
       </head>
-      <body>
-        <h1>Directory: ${path}</h1>
-        <ul>
-          ${
-    path !== "/" ? `<li class="directory"><a href="${join(relativePath, "..")}"><span class="name">..</span></a></li>` : ""
-  }
-          ${items.join("\n")}
-        </ul>
-        <footer style="margin-top: 20px; font-size: 0.8em; color: #999; text-align: center;">
-          Deno File Server
-        </footer>
+      <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+        <div class="max-w-5xl mx-auto px-4 py-8">
+          <div class="flex items-center justify-between mb-6 pb-3 border-b border-gray-200 dark:border-gray-700">
+            <h1 class="text-2xl font-bold">目录列表: ${path}</h1>
+          </div>
+          
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <ul>
+              ${
+                path !== "/" ? 
+                `<li class="border-b border-gray-200 dark:border-gray-700">
+                  <a href="${join(relativePath, "..")}" class="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition duration-150">
+                    <svg class="w-5 h-5 text-gray-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="flex-1 font-medium">..</span>
+                  </a>
+                </li>` : ""
+              }
+              ${items.join("\n")}
+            </ul>
+          </div>
+          
+          <footer class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400 py-4">
+            Deno File Server
+          </footer>
+        </div>
       </body>
     </html>
   `;
+  
+  // 使用 Twind 提取生成的 CSS
+  const { html, css } = extract(body);
+  
+  // 将提取的 CSS 注入到 HTML 的头部
+  return html.replace("</head>", `<style data-twind>${css}</style></head>`);
 }
 
 // 自定义静态文件服务中间件
