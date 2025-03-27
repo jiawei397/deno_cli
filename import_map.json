@@ -1,10 +1,10 @@
 {
-    "imports": {
-      "@/": "./",
-      "std/": "https://deno.land/std@0.202.0/",
-      "cliffy/": "https://deno.land/x/cliffy@v1.0.0-rc.3/",
-      "zip": "https://deno.land/x/zip@v1.2.2/mod.ts",
-      "jsonc": "https://deno.land/x/jsonc@1/main.ts",
-      "ask": "https://deno.land/x/ask@1.0.6/mod.ts"
-    }
+  "imports": {
+    "@/": "./",
+    "std/": "https://deno.land/std@0.202.0/",
+    "cliffy/": "https://deno.land/x/cliffy@v1.0.0-rc.3/",
+    "zip": "https://deno.land/x/zip@v1.2.2/mod.ts",
+    "jsonc": "https://deno.land/x/jsonc@1/main.ts",
+    "ask": "https://deno.land/x/ask@1.0.6/mod.ts"
   }
+}
