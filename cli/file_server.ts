@@ -117,13 +117,18 @@ function generateDirectoryListing(
         const modified = stat.mtime ? 
           new Date(stat.mtime).toLocaleString() : "Unknown";
         
-        fileInfo = `<span class="size">${size}</span> <span class="date">${modified}</span>`;
+        fileInfo = `<span class="size">${size}</span><span class="date">${modified}</span>`;
       } catch {
         fileInfo = "";
       }
     }
     
-    return `<li><a href="${itemPath}">${itemName}</a>${fileInfo}</li>`;
+    return `<li class="${file.isDirectory ? 'directory' : 'file'}">
+      <a href="${itemPath}">
+        <span class="name">${itemName}</span>
+        ${fileInfo}
+      </a>
+    </li>`;
   });
 
   return `
@@ -131,26 +136,124 @@ function generateDirectoryListing(
     <html>
       <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Directory Listing - ${path}</title>
         <style>
-          body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-          h1 { border-bottom: 1px solid #eee; padding-bottom: 10px; }
-          ul { list-style-type: none; padding: 0; }
-          li { margin: 8px 0; }
-          a { display: block; padding: 8px; text-decoration: none; color: #0366d6; }
-          a:hover { background-color: #f6f8fa; }
-          .size { font-size: 0.9em; color: #666; }
-          .date { font-size: 0.9em; color: #999; }
+          :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --accent-color: #0366d6;
+            --hover-bg: #f6f8fa;
+            --border-color: #eee;
+          }
+          
+          @media (prefers-color-scheme: dark) {
+            :root {
+              --bg-color: #0d1117;
+              --text-color: #c9d1d9;
+              --accent-color: #58a6ff;
+              --hover-bg: #161b22;
+              --border-color: #30363d;
+            }
+          }
+          
+          body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+          }
+          
+          h1 {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+          }
+          
+          ul {
+            list-style-type: none;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+          }
+          
+          li {
+            border-bottom: 1px solid var(--border-color);
+          }
+          
+          li:last-child {
+            border-bottom: none;
+          }
+          
+          li a {
+            display: flex;
+            text-decoration: none;
+            color: var(--accent-color);
+            padding: 12px 15px;
+            align-items: center;
+          }
+          
+          li a:hover {
+            background-color: var(--hover-bg);
+          }
+          
+          .name {
+            flex: 1;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          
+          .directory .name {
+            font-weight: 600;
+          }
+          
+          .size {
+            width: 80px;
+            text-align: right;
+            color: #666;
+            font-size: 0.9em;
+            margin-right: 20px;
+          }
+          
+          .date {
+            width: 180px;
+            text-align: right;
+            color: #999;
+            font-size: 0.9em;
+          }
+          
+          @media (max-width: 768px) {
+            .date {
+              display: none;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            h1 {
+              font-size: 1.5em;
+            }
+            .size, .date {
+              display: none;
+            }
+          }
         </style>
       </head>
       <body>
         <h1>Directory: ${path}</h1>
         <ul>
           ${
-    path !== "/" ? `<li><a href="${join(relativePath, "..")}">..</a></li>` : ""
+    path !== "/" ? `<li class="directory"><a href="${join(relativePath, "..")}"><span class="name">..</span></a></li>` : ""
   }
           ${items.join("\n")}
         </ul>
+        <footer style="margin-top: 20px; font-size: 0.8em; color: #999; text-align: center;">
+          Deno File Server
+        </footer>
       </body>
     </html>
   `;
